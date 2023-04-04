@@ -1,0 +1,119 @@
+[
+  {
+    "title": "Electric Bike T",
+    "description": "Bici electrica para aficionados",
+    "price": 1200,
+    "thumbnail": [
+      "https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"
+    ],
+    "code": "140",
+    "stock": 4,
+    "status1": true,
+    "category": "Electric Bikes",
+    "id": 1
+  },
+  {
+    "title": "Giant",
+    "description": "Bici para aficionados",
+    "price": 900,
+    "thumbnail": [
+      "https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"
+    ],
+    "code": "130",
+    "stock": 2,
+    "status1": true,
+    "category": "Road Bikes",
+    "id": 2
+  },
+  {
+    "title": "Kids Bike",
+    "description": "Bici para niños",
+    "price": 800,
+    "thumbnail": [
+      "https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"
+    ],
+    "code": "145",
+    "stock": 10,
+    "status1": true,
+    "category": "Kids Bikes",
+    "id": 3
+  },
+  {
+    "title": "Trek",
+    "description": "Bici para aficionados",
+    "price": 1200,
+    "thumbnail": [
+      "https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"
+    ],
+    "code": "169",
+    "stock": 2,
+    "status1": true,
+    "category": "Road Bikes",
+    "id": 4
+  },
+  {
+    "title": "Giant Talon 2 Mountain Bike",
+    "description": "Giant's new lightweight ALUXX aluminium frame that features a classic hardtail design, Talon is a perfect choice for XC or light trail terrain",
+    "price": 800,
+    "thumbnail": [
+      "https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"
+    ],
+    "code": "201",
+    "stock": 8,
+    "status1": true,
+    "category": "Road Bikes",
+    "id": 5
+  },
+  {
+    "title": "Frog Tadpole Kids Balance Bike",
+    "description": "Frog have a winning knack for creating lighter weight, better spec'd but still competitively priced kids' bikes, which are easier to ride.",
+    "price": 1100,
+    "thumbnail": [
+      "https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"
+    ],
+    "code": "152",
+    "stock": 6,
+    "status1": true,
+    "category": "Kids Bikes",
+    "id": 6
+  },
+  {
+    "title": "Casco SK1 Verde Agua",
+    "description": "Los cascos Sk1 están diseñados para el uso urbano y se adaptan perfectamente a las modalidades de ciclismo urbano, skate y patinaje.",
+    "price": 50,
+    "thumbnail": [
+      "https://trek.scene7.com/is/image/TrekBicycleProducts/BontragerSolsticeMIPSCPSC_30466_A_Primary?$responsive-pjpg$&cache=on,on&wid=800&hei=600"
+    ],
+    "code": "158",
+    "stock": 9,
+    "status1": true,
+    "category": "Accesorios",
+    "id": 7
+  },
+  {
+    "title": "Llanta de respuesto",
+    "description": "Llanta de respuesto bicicleta Trek",
+    "price": 60,
+    "thumbnail": [
+      "https://trek.scene7.com/is/image/TrekBicycleProducts/BontragerSolsticeMIPSCPSC_30466_A_Primary?$responsive-pjpg$&cache=on,on&wid=800&hei=600"
+    ],
+    "code": "162",
+    "stock": 18,
+    "status1": true,
+    "category": "Accesorios",
+    "id": 8
+  },
+  {
+    "title": "Whyte 909 X 2023 Mountain Bike",
+    "description": "For 2023 Whyte have stepped things up again by offering the ultimte Enduro hardtail with Sram GX AXS Eagle wireless shifting.",
+    "price": 3500,
+    "thumbnail": [
+      "https://trek.scene7.com/is/image/TrekBicycleProducts/BontragerSolsticeMIPSCPSC_30466_A_Primary?$responsive-pjpg$&cache=on,on&wid=800&hei=600"
+    ],
+    "code": "139",
+    "stock": 2,
+    "status1": true,
+    "category": "Mountain Bike",
+    "id": 9
+  }
+]

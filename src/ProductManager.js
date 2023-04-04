@@ -2,12 +2,12 @@ const {readFile, writeFile, existsSync} = require('fs');
 const util = require('util');
 const readFilePromise = util.promisify(readFile);
 const writeFilePromise = util.promisify(writeFile);
-const bike = require('../content/products');
 
 
 
 
- module.exports = class ProductManager {
+
+module.exports = class ProductManager {
     constructor (path) {
         this.products = [];
         this.path = path;
@@ -20,7 +20,7 @@ const bike = require('../content/products');
             try{
                 const readJsonFile = await readFilePromise(this.path, 'utf8')
                 this.products = await JSON.parse(readJsonFile);
-                 console.log(this.products);
+                 //console.log(this.products);
             }
             catch (e) {
                 console.error(e);
@@ -37,22 +37,25 @@ const bike = require('../content/products');
 
 
     addProduct = async (product) =>  {
-       const {title, description, price, thumbnail, code, stock} = product
-        
+
+          const {title, description, price, thumbnail, code, stock, category} = product;
+          
        const prod = {
         title,
         description,
         price,
         thumbnail,
         code,
-        stock
-       }
+        stock,
+        status1: true,
+        category
+       };
 
-       const emptyString = Object.values(prod).includes("")
+       const emptyString = Object.values(prod).includes("");
   
        if (!emptyString) {
-
-                    this.products = await this.getProducts();      
+    
+            this.products = await this.getProducts();      
       }
       else {
 
@@ -67,18 +70,18 @@ const bike = require('../content/products');
             throw new Error('Code field is not unique');
         }
         else {
+            this.products =  await this.getProducts();
+
             prod.id = this.products[this.products.length-1].id +1;
                this.products.push(prod)
               
                try {
                    await writeFilePromise(this.path, JSON.stringify(this.products, null, 2 ));
                    console.log(`Success: Product ${title} with Id number ${prod.id} has been added`);
-                   return prod;
                   }
                   catch (e) {
                       console.error(e);
                   }
-                  
         }}
 
         else {
@@ -88,25 +91,26 @@ const bike = require('../content/products');
             try {
                 await writeFilePromise(this.path, JSON.stringify(this.products, null, 2));
                 console.log(`Success: Product ${title} with Id number ${prod.id} has been added`);
-                return prod;
             }
             catch (e) {
                 console.log(e);
             }
         }
+        return prod;
 
          };
          
 
         getProductById  = async (id) => {
              try {
+                
                  const toArray = await this.getProducts();
                  const findId = toArray.find((item) => item.id === id)
                     if (findId) {
                          return  findId;
                            }
                       else {
-                             return null
+                             throw new Error('Not Found')
                            }
                   }
              catch (e) {
@@ -115,6 +119,7 @@ const bike = require('../content/products');
            };
 
             updateProductById = async (id, product) => {
+                let updatedProduct = {}
                 try {
                     
                     this.products = await this.getProducts();
@@ -132,35 +137,33 @@ const bike = require('../content/products');
                                    throw new Error('Code field is not unique');
                                         }
                            else {
-                             const {title, description, price, thumbnail, code, stock} = product
-                      
-                            findId["title"] = title
-                            findId["description"] = description
-                            findId["price"] = price
-                            findId["thumbnail"] = thumbnail
-                            findId["code"] = code
-                            findId["stock"] = stock
-                    
-                           // Object.assign(findId, newObj);
-
+                             updatedProduct = Object.assign(findId, newObj);
+                              console.log(updatedProduct);
+                               console.log(`Success: Product with ID number ${id} has been updated`);
+                        
                       try {
                         await writeFilePromise(this.path, JSON.stringify(this.products, null, 2));
+                        
                       }
                       catch (e) {
                         console.error(e);
                       }
 
-                      return ( `Success: Product with ID number ${id} has been updated`, findId);
-
-                           }    
+                           }             
+                            
+               
+                            
         }
 
-        else throw new Error ('Does not match the criteria to update product');
+        else return ('Does not match the criteria to update product');
+         
                 }
 
                 catch (e) {
                     console.error(e);
                 }
+
+            return updatedProduct
 
             };
 
@@ -168,7 +171,7 @@ const bike = require('../content/products');
                  
                 try {
                     
-                    this.products = await this.products();
+                    this.products = await this.getProducts();
                     const findProd = this.products.findIndex((item) => item.id === id);
                     //console.log('the index is:',findProd);
 
@@ -199,7 +202,7 @@ const bike = require('../content/products');
 
 
 
-//const filePath = './content/products-file.json'
+//const filePath = './products-file.json'
 
 
 //const callNewProduct = new ProductManager(filePath);
@@ -210,18 +213,13 @@ const bike = require('../content/products');
 //await callNewProduct.addProduct(bike.kidsBike);
 //await callNewProduct.addProduct(bike.cannondale);
 //await callNewProduct.addProduct(bike.trek);
-/*await callNewProduct.addProduct(bike.talon);
-await callNewProduct.addProduct(bike.frog);
-await callNewProduct.addProduct(bike.cliftonElectric);
-await callNewProduct.addProduct(bike.genesis);
-await callNewProduct.addProduct(bike.modelM);*/
 /*console.log('get products', await callNewProduct.getProducts());
 console.log('find by id', await callNewProduct.getProductById(1));
 console.log('update', await callNewProduct.updateProductById(1, kidsBike));
 console.log('get products', await callNewProduct.getProducts());
 console.log( await callNewProduct.deleteProductById(1));
-console.log('get products', await callNewProduct.getProducts());
-};*/
+console.log('get products', await callNewProduct.getProducts());*/
+//};
 
 //app();
 
