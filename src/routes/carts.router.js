@@ -75,6 +75,27 @@ router.post('/api/carts/:cid/product/:pid/', invalidProductId, async (req, res) 
 
 });
 
+router.put('/api/carts/:cid/product/:pid/', invalidProductId, async (req, res) => {
+        try {
+                const { quantity } = req.body;
+                   const { cid, pid } = req.params;
+
+                        const quantityUpdate =  await callCart.updateProdQuantity(Number(cid), Number(pid), quantity);
+
+                          res.status(200).send(quantityUpdate);
+              
+        }   
+
+        catch (e) {
+                res.status(500).json({message: "Error", error: {e}});
+        }
+
+
+
+
+
+});
+
 const findCartProductId = async (req, res, next) => {
         try {
            const { cid, pid } = req.params;
@@ -110,29 +131,6 @@ router.delete('/api/carts/:cid/product/:pid/', invalidProductId, findCartProduct
          }
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

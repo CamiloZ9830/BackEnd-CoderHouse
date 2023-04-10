@@ -197,6 +197,7 @@ module.exports = class ProductManager {
             catch (e) {
                 console.error(e);
             }
+            
 };
 };
 

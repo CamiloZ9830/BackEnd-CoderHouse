@@ -4,6 +4,7 @@ const ProductManager = require('./ProductManager');
 const readFilePromise = util.promisify(readFile);
 const writeFilePromise = util.promisify(writeFile);
 const path = require('path');
+const { error } = require('console');
 
 
 
@@ -112,6 +113,32 @@ module.exports = class CartsManager {
                 console.error(e);
             }
         }
+
+
+
+        updateProdQuantity = async (cartId, prodId, quantity) => {
+             try {
+                this.carts = await this.getCarts();
+                const findCart = this.carts.findIndex(cart => cart.id === cartId);
+                const findProd = this.carts[findCart].products.findIndex(prod => prod.product === prodId);
+                
+                if (findProd > -1) {
+                    this.carts[findCart].products[findProd].quantity = quantity;
+                    await writeFilePromise(this.path, JSON.stringify(this.carts, null, 2 ));
+                    return {status: "success", message: "Quantity succesfully updated"}
+                } 
+                else {
+                    return {status: "failed", message: "Product not Found in cart"}
+                }
+
+             }
+
+             catch (e) {
+                console.error(e);
+             }
+
+
+        };
 
 
         addCartProductId = async (cartId, prodId) => {
