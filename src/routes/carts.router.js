@@ -1,24 +1,28 @@
 const { Router } = require('express');
-const CartsManager = require('../CartsManager');
-const ProductManager = require('../ProductManager');
+const CartsManager = require('../dao/fs/CartsManager');
+const ProductManager = require('../dao/fs/ProductManager');
 const router = Router();
 const path = require('path');
+const mongoDbCartsManager = require('../dao/mongoDB/mongoCartsManager');
 
-const filePath = path.resolve(__dirname, '../carts-file.json');
+
+const filePath = path.resolve(__dirname, '../dao/fs/carts-file.json');
 const callCart = new CartsManager(filePath);
-const filePathP = path.resolve(__dirname, '../products-file.json');
+const filePathP = path.resolve(__dirname, '../dao/fs/products-file.json');
 const callProducts = new ProductManager(filePathP);
 
-
+const mongoCartsManager = new mongoDbCartsManager();
 
 router.post('/api/carts/', async (req, res) => {
         try {
-                const newCart = await callCart.addCart();
+                //const newCart = await callCart.addCart();
+                await mongoCartsManager.connect();
+                const saveCart = await mongoCartsManager.addCart();
 
-                res.status(200).send({status: 'success', payload: newCart});
+                res.status(201).send({status: 'success', payload: saveCart});
         }
         catch (e) {
-                res.status(500).json({message: "Error"});
+                res.status(500).json({message: e.message});
         }
         
 });
@@ -28,14 +32,29 @@ router.get('/api/carts/:cid/', async (req, res) => {
         try {
               const {cid} = req.params;
 
-                const cart = await callCart.getCartProductById(Number(cid));
+                //const cart = await callCart.getCartProductById(Number(cid));
+                const getCartPopulate = await mongoCartsManager.getCartByIdPopulate(cid);
          
-                res.status(200).send({status: 'success', payload: cart});
+                getCartPopulate ? res.status(200).send({status: 'success', payload: getCartPopulate})
+                : res.status(404).send({status: 'error', message: 'Resource Not Found'});
         }
         catch (e) {
-                res.status(500).json({message: "Error"});
+                res.status(500).json({message: e.message});
         }
        
+});
+
+router.put('/api/cats/:cid', async (req, res) => {
+        try{
+                const { cid } = req.params;
+
+                
+
+        }
+
+        catch (e) {
+                res.status(500).json({message: e.message});
+        }
 });
 
 
@@ -53,47 +72,46 @@ const invalidProductId = async (req, res, next) => {
              }
 
              catch (e) {
-                res.status(500).send('Error:', e)
+                res.status(500).send({message: e.message})
              }
-        
-
 };
 
 
-router.post('/api/carts/:cid/product/:pid/', invalidProductId, async (req, res) => {
+router.post('/api/carts/:cid/product/:pid/',  async (req, res) => {
        try {
         const {cid, pid} = req.params;
 
-        const addProd = await callCart.addCartProductId(Number(cid), Number(pid));
+        //const addProd = await callCart.addCartProductId(Number(cid), Number(pid));
+        const addProductId = await mongoCartsManager.addProductId(cid, pid);
 
-        res.status(200).send({status: 'success', payload: addProd});
+        addProductId ? res.status(201).send({status: 'success', payload: addProductId}) 
+        : res.status(404).send({status: 'error', message: 'Resource Not Found'});
        }
        catch (e) {
-               res.status(500).json({message: "Error", error: {e}});
+               res.status(500).json({message: e.message});
        }
-        
-
 });
 
-router.put('/api/carts/:cid/product/:pid/', invalidProductId, async (req, res) => {
+router.put('/api/carts/:cid/product/:pid/', async (req, res) => {
         try {
                 const { quantity } = req.body;
                    const { cid, pid } = req.params;
 
-                        const quantityUpdate =  await callCart.updateProdQuantity(Number(cid), Number(pid), quantity);
+                    if (quantity > 0 && quantity < 11) {
 
-                          res.status(200).send(quantityUpdate);
-              
+                            //const quantityUpdate =  await callCart.updateProdQuantity(Number(cid), Number(pid), quantity);
+                            const updateProdQuantity = await mongoCartsManager.addProductQuantity(cid, pid, quantity);
+    
+                              updateProdQuantity ? res.status(201).send({status: 'success', payload: updateProdQuantity})
+                              : res.status(404).send({status: 'error', message: 'Resource Not Found' });
+                    }
+                    else {
+                        res.status(500).send(`Value too high or too low to update`);
+                    }              
         }   
-
         catch (e) {
-                res.status(500).json({message: "Error", error: {e}});
+                res.status(500).json({message: e.message});
         }
-
-
-
-
-
 });
 
 const findCartProductId = async (req, res, next) => {
@@ -105,30 +123,45 @@ const findCartProductId = async (req, res, next) => {
                 return
            }
            else {
-                res.status(400).send(`Cannot delete because product id number ${pid} doesnt exist in this cart`);
+                res.status(404).send(`Cannot delete because product id number ${pid} doesnt exist in this cart`);
            }
 
         }
 
         catch (e) {
-                res.status(500).send('Error:', e)
+                res.status(500).send({message: e.message});
         }
-
-          
-
 };
 
-router.delete('/api/carts/:cid/product/:pid/', invalidProductId, findCartProductId, async (req, res) => {
+router.delete('/api/carts/:cid/product/:pid/',  async (req, res) => {
          try {
                 const { cid, pid } = req.params;
-                const deleteProd = await callCart.DeleteCartProductById(Number(cid), Number(pid));
+                //const deleteProd = await callCart.DeleteCartProductById(Number(cid), Number(pid));
+                const deleteProd = await mongoCartsManager.deleteProductId(cid, pid);
 
-                res.status(200).send({status: 'success', payload: deleteProd})
+                deleteProd ? res.status(200).send({status: 'success', payload: deleteProd})
+                : res.status(404).send({status: 'error', message: 'Resource Not Found' });
          }
 
          catch (e) {
-                res.status(500).json({message: "Error", error: {e}});
+                res.status(500).json({message: e.message});
          }
+
+});
+
+
+router.delete('/api/carts/:cid',  async (req, res) => {
+        try {
+               const { cid } = req.params;
+               const deleteProd = await mongoCartsManager.deleteAllProducts(cid);
+
+              deleteProd ? res.status(200).send({status: 'success', payload: deleteProd})
+              : res.status(404).send({status: 'error', message: 'Resource Not Found' });
+        }
+
+        catch (e) {
+               res.status(500).json({message: e.message});
+        }
 
 });
 

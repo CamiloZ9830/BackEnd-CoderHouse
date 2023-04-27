@@ -5,6 +5,8 @@ const app = express();
 const createWebSocketServer = require('./webSocketServer');
 const handlebars = require('express-handlebars');
 
+
+
 const httpServer = app.listen(8080, () => {
 console.log('Server is listening on port 8080...');
 }); 
@@ -13,9 +15,6 @@ console.log('Server is listening on port 8080...');
 const webSocketServer = createWebSocketServer(httpServer);
 /*Encerre toda las rutas de products.router en una funcion llamada returnRouter que tiene como parametro la configuracion del servidor websocket y poder usar las operaciones http*/
 const productsRouter = require('./routes/products.router')(webSocketServer);
-
-
-
 
 
 app.use(express.json());
@@ -33,6 +32,8 @@ app.use(express.static(__dirname + '/public'));
 app.use('/', productsRouter);
 app.use('/', cartsRouter);
 app.use('/', viewsRouter);
+
+
 
 
 

@@ -1,10 +1,10 @@
 const {readFile, writeFile, existsSync} = require('fs');
 const util = require('util');
-const ProductManager = require('./ProductManager');
+const ProductManager = require('../fs/ProductManager');
 const readFilePromise = util.promisify(readFile);
 const writeFilePromise = util.promisify(writeFile);
 const path = require('path');
-const { error } = require('console');
+
 
 
 

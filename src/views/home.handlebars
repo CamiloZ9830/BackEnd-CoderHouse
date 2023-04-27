@@ -1,15 +1,58 @@
-<div>
+
     <h1>Listado de productos</h1>
-      {{#each getProducts}}
-       <div>
-          <p><b>ID: {{this.id}}</b></p>
-          <h2>{{this.title}}</h2>
-          <p>{{this.description}}</p>
-          <img width="420" src="{{this.thumbnail}}" alt="{{this.title}}">
-          <p>Price: {{this.price}}</p>
-          <p>Code: {{this.code}}</p>
-          <p>Stock: {{this.stock}}</p>
-          <p>Category: {{this.category}}</p>
-        </div>
-      {{/each}}
+     
+       <div class="shop">
+        {{#if getDbCart}}
+          {{#each getDbCart.products}}
+           <div class="item">
+                    <img src={{this.product.thumbnail}} alt="{{this.product.title}}" />
+                    <div class="descripcion-Item">
+                       <h3>{{this.product.title}}</h3>
+                       <p>{{this.product.description}}</p>
+                       <p><b>Categoria: </b>{{this.product.category}}</p>
+                       <p><b>Cantidad: </b>{{this.quantity}}</p>
+                       <p><b>Precio</b> $ {{this.product.price}}</p>
+                      <div class="precio-cantidad">
+                          <h3>$ {{this.product.price}}</h3>                          
+                      </div>                     
+                    </div>             
+              </div>
+           {{/each}}
+        {{else}}
+      {{#each paginatedDocs}}
+       <div class="item">                         
+                    <img src={{this._doc.thumbnail}} alt={{this._doc.title}}/>
+                    <div class="descripcion-Item">
+                       <h3>{{this._doc.title}}</h3>
+                       <p>{{this._doc.description}}</p>
+                       <p><b>Categoria: </b>{{this._doc.category}}</p>
+                       <p><b>Stock: </b>{{this._doc.stock}}</p>
+                       <p><b>Precio</b> $ {{this._doc.price}}</p>
+                      <div class="precio-cantidad">
+                          <h3>$ {{this._doc.price}}</h3>                          
+                      </div>                     
+                    </div>                                
+                      <button class="button-33">Agregar al carrito</button>  
+              </div>
+              
+          {{/each}}
+          <div class="pagination">
+  {{#if paginatedInfo.hasPrevPage}}
+    <a href="?page={{paginatedInfo.prevPage}}&limit={{paginatedInfo.limit}}&category={{category}}&sort={{sort}}">Prev</a>
+  {{/if}}
+
+  {{#each paginatedInfo.pages}}
+    {{#if this.isCurrent}}
+      <span class="current">{{this.page}}</span>
+    {{else}}
+      <a href="?page={{this.page}}&limit={{paginatedInfo.limit}}&category={{category}}&sort={{sort}}">{{this.page}}</a>
+    {{/if}}
+  {{/each}}
+
+  {{#if paginatedInfo.hasNextPage}}
+    <a href="?page={{paginatedInfo.nextPage}}&limit={{paginatedInfo.limit}}&category={{category}}&sort={{sort}}">Next</a>
+  {{/if}}
 </div>
+      {{/if}}
+     </div>
+
