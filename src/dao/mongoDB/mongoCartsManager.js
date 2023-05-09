@@ -4,26 +4,13 @@ const cartsModel = require('../models/carts.model');
 
 class mongoDbCartsManager {
     constructor () {
-        this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority';
-        this.connection = null
-        this.carts = null
+      this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority'
+        this.connection = mongoose.connect(this.uri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true
+       }); 
+        this.carts = cartsModel
     }
-    
-    connect = async () => {
-        try {
-          this.connection = mongoose.connect(this.uri, {
-             useNewUrlParser: true,
-             useUnifiedTopology: true
-          }); 
-           console.log('Connected to MongoDB Atlas', mongoose.connection.readyState);
-           this.carts = cartsModel;
-         }
-        catch (e) {
-          console.error(e.message);
-            process.exit();
-           }
-      };
-
 
       getCartById = async (id) => {
       try{
@@ -37,8 +24,7 @@ class mongoDbCartsManager {
 
        
       getCartByIdPopulate = async (id) => {
-        try{
-            await this.connect();
+        try{          
             const getCart = await cartsModel.findById(id)
             .populate('products.product', ['title', 'description', 'price', 'thumbnail', 'code', 'category']).lean();
             return getCart;
@@ -95,7 +81,7 @@ class mongoDbCartsManager {
             { _id: cartId, 'products.product': prodId },
             { $inc: { 'products.$.quantity': 1 } }
           );
-
+               console.log(result);
           if (result.modifiedCount === 0) {
             await cartsModel.updateOne(
               { _id: cartId },
@@ -107,6 +93,25 @@ class mongoDbCartsManager {
           console.log(e.message);         
         }
       };
+
+      /*addProductId = async (cartId, prodId) => {
+        try {
+          const result = await cartsModel.updateOne(
+            { _id: cartId, 'products.product': prodId },
+            { $inc: { 'products.$.quantity': 1 } },
+            {upsert: true}
+          );
+               console.log(result);
+               if (result.upsertedCount === 1) {
+                return 'Product added to cart';
+              } else if (result.modifiedCount === 1) {
+                return 'Product quantity updated';
+              }
+          return 'Product added to cart';
+        } catch (e) {
+          console.log(e.message);         
+        }
+      };*/
 
 
 
@@ -130,10 +135,25 @@ class mongoDbCartsManager {
               }
          };*/
 
-       /*agrega  la cantidad del producto pasado por el req.body*/
+         /*modifica el carrito con un nuevo arreglo de productos*/
+         addNewArrayOfProducts = async (cartId, arrayProd) => {
+           try {
+              const updateArrayCart = await cartsModel.findByIdAndUpdate(
+                { _id: cartId },
+                { $set: { "products": arrayProd } }             
+              )
+              return "Updated";
+           }
+           catch (e) {
+            console.error(e.message);
+           }
+
+         };
+
+
+       /*modifica la quantity del producto pasado por el req.body*/
        addProductQuantity = async (cartId, prodId, qty) => {
           try {
-            await this.connect();
             const updatedCart = await cartsModel.findOneAndUpdate(
               {
                 _id: cartId,
@@ -186,7 +206,6 @@ class mongoDbCartsManager {
         /*elimina un producto del carrito y si la cantidad el mas de uno resta -1 al quantity*/
     deleteProductId = async (cartId, prodId) => {
       try {
-        await this.connect();
        await cartsModel.updateOne(
           { _id: cartId, 'products.product': prodId },
           { $inc: { 'products.$.quantity': -1 } }

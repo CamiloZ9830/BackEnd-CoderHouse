@@ -3,29 +3,16 @@ const productsModel = require('../models/products.model')
 
 class mongoDBProductsManager {
     constructor () {
-        this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority';
-        this.connection = null;
-        this.products = null;
+      this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority'
+      this.connection = mongoose.connect(this.uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+     }); 
+      this.carts = productsModel
     }
 
-       /*conectar a mongoDB*/
-        connect = async () => {
-           try {
-             this.connection = mongoose.connect(this.uri, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-             }); 
-              console.log('Connected to MongoDB Atlas', mongoose.connection.readyState);
-              this.products = productsModel;
-            }
-           catch (e) {
-             console.error(e.message);
-               process.exit();
-              }
-         };
-
-
           /*pagination*/
+          /* organiza los productos de la base de datos paginados usando "mongoose Paginate V2" con filtros como categoria, sort, y limit */
          getProducts = async (limit, page, category, sort) => {
 
           if (typeof category === "string") {
@@ -33,12 +20,11 @@ class mongoDBProductsManager {
           }
           
           if (Object.keys(sort).length !== 0) {
-            sort = {price: sort}            
+            sort = {price: sort};           
             }
 
-               try {
-                await this.connect();           
-                  const getProd = await this.products.paginate( category, { page: page, limit: limit, sort: sort});
+               try {       
+                  const getProd = await productsModel.paginate( category, {limit: limit, sort: sort, page: page});
                   return getProd                          
                }
             
@@ -49,11 +35,9 @@ class mongoDBProductsManager {
 
          
           addProduct = async (product) => {     
-               try { 
-                     await this.connect();
+               try {
                      const savedProduct =  await productsModel.create(product);
                        console.log('Success: ', savedProduct);
-                       await this.disconnect();
                         return savedProduct._id;                   
                   }  
                     catch (e) {
@@ -64,7 +48,6 @@ class mongoDBProductsManager {
 
          findProductById = async (id) => {
               try {
-                await this.connect();
                 const findProd = await productsModel.findById(id);
                 if(!findProd) {
                   return ({failed: `Object with id: ${id} not found`})
@@ -80,7 +63,6 @@ class mongoDBProductsManager {
          updateProductById = async (id, product) => {
             
                   try{
-                    await this.connect();
                     const findProd = await productsModel.findById(id);
                     if (!findProd) {
                         return ({failed: `Object with id: ${id} not found`});

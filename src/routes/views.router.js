@@ -11,12 +11,8 @@ const mongoCartsManager = new mongoDBCartsManager();
 
 
 
-
-
 router.get('/', async (req, res) => {
     try {
-        
-
         res.render('home', {});
     }
 
@@ -52,6 +48,7 @@ router.get('/realTimeChat', async (req, res) => {
     }
 });
 
+/* se usas queries como limit, page, product category (RoadBikes, ElectricBikes, accesorios etc.) y sort */
 router.get('/products', async (req, res) => {
     try {
         const limit = req.query.limit || 8;
@@ -59,13 +56,18 @@ router.get('/products', async (req, res) => {
         const category = req.query.category || {};
         const sort = req.query.sort || {};
         
-    if (isNaN(page) || page <= 0) {
-        page = 1;
-      }
-        const getDbProducts = await mongoProductManager.getProducts(Number(limit), Number(page), category, sort);
-        const docs = getDbProducts.docs.map(product => Object.assign({}, product));
+        const getDbProducts = await mongoProductManager.getProducts(Number(limit), page, category, sort);
 
+        if (page > getDbProducts.totalPages) {
+            return res.redirect(`/products?page=${getDbProducts.totalPages}`);         
+        }
+        else if (isNaN(page) || page < 1) {
+            return res.redirect(`/products?page=${1}`);
+        }
+
+        const docs = getDbProducts.docs.map(product => Object.assign({}, product));
         res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts });
+        
     }
 
     catch (e) {
@@ -73,7 +75,7 @@ router.get('/products', async (req, res) => {
     }
 });
 
-
+/*Esta ruta renderiza los productos del un carrito por id de carrito */
 router.get('/carts/:cid/', async (req, res) => {
     try {
         const { cid } = req.params;      

@@ -13,10 +13,11 @@ const callProducts = new ProductManager(filePathP);
 
 const mongoCartsManager = new mongoDbCartsManager();
 
+
 router.post('/api/carts/', async (req, res) => {
         try {
                 //const newCart = await callCart.addCart();
-                await mongoCartsManager.connect();
+                
                 const saveCart = await mongoCartsManager.addCart();
 
                 res.status(201).send({status: 'success', payload: saveCart});
@@ -44,11 +45,17 @@ router.get('/api/carts/:cid/', async (req, res) => {
        
 });
 
-router.put('/api/cats/:cid', async (req, res) => {
+router.put('/api/carts/:cid', async (req, res) => {
         try{
                 const { cid } = req.params;
+                const newArrayProd = req.body;
+                console.log(cid, newArrayProd);
 
-                
+                if (Array.isArray(newArrayProd) ) {
+                      const updateCart = await mongoCartsManager.addNewArrayOfProducts(cid, newArrayProd);
+                      updateCart ? res.status(200).send({status: 'success', payload: updateCart})
+                      : res.status(404).send({status: 'error', message: 'Resource not found'});
+                };
 
         }
 
@@ -58,7 +65,7 @@ router.put('/api/cats/:cid', async (req, res) => {
 });
 
 
-const invalidProductId = async (req, res, next) => {
+/*const invalidProductId = async (req, res, next) => {
              try {
                  const { pid } = req.params;
                      const findProd = await callProducts.getProductById(Number(pid));
@@ -74,7 +81,7 @@ const invalidProductId = async (req, res, next) => {
              catch (e) {
                 res.status(500).send({message: e.message})
              }
-};
+};*/
 
 
 router.post('/api/carts/:cid/product/:pid/',  async (req, res) => {
@@ -114,7 +121,7 @@ router.put('/api/carts/:cid/product/:pid/', async (req, res) => {
         }
 });
 
-const findCartProductId = async (req, res, next) => {
+/*const findCartProductId = async (req, res, next) => {
         try {
            const { cid, pid } = req.params;
            const findProd = await callCart.findProductId(Number(cid), Number(pid));
@@ -131,7 +138,7 @@ const findCartProductId = async (req, res, next) => {
         catch (e) {
                 res.status(500).send({message: e.message});
         }
-};
+};*/
 
 router.delete('/api/carts/:cid/product/:pid/',  async (req, res) => {
          try {

@@ -14,7 +14,12 @@ const cartsSchema = new mongoose.Schema({
             min: 1,
             max: 10
         }}
-    ]
+    ],
+    createdAt: {
+        inmutable: true,
+        type: Date,
+        default: () => Date.now()
+    }  
 });
 
 

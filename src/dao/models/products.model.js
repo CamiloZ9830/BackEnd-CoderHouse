@@ -42,6 +42,7 @@ const productsSchema = new mongoose.Schema({
      }
 
 }); 
+
 /*mongoose middleware*/
 productsSchema.pre('save', async function (next) {
    try {

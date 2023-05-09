@@ -23,7 +23,7 @@ socket.on('disconnect', () => {
 });
 
 
-/*chat websocket server*/
+/*chat websocket*/
 let user;
 const emailRegex = /\S+@\S+\.\S+/;
 let chatBox = document.getElementById('input-chat');

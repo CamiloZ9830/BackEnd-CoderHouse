@@ -1,5 +1,4 @@
 const { Server } = require('socket.io');
-const mongoose = require('mongoose');
 const mongoDbChatsManager = require('./dao/mongoDB/mongoChatManager');
 
 
@@ -31,7 +30,7 @@ const createWebSocketServer = (httpServer) => {
         messages.push(data);
        webSocketServer.emit('messageLogs', messages);
 
-       /* guarda el mensaje emitido desde la base de datos*/
+       /* guarda el mensaje emitido a la base de datos*/
             mongoChatManager.saveMessage(data).then(cb => { return console.log( {
                                                                     status: 'success', 
                                                                     message: `message saved succesfully, ${cb}`

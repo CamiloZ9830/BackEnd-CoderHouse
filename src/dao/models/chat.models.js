@@ -19,13 +19,14 @@ const chatSchema = new mongoose.Schema({
           required: true,
           validate: {
             validator: value =>  {
-              return /^[\w\s.,!?-]{1,500}$/.test(value);
+              return /^[\w\s.,¡!¿?áéíóúüñÁÉÍÓÚÜÑ-]{1,500}$/.test(value);
             },
             message: props => `${props.value} is not a valid message!`
           }
         },
 
       timestamps: {
+            inmutable: true,
             type: Date,
             default: () => Date.now()
         }

@@ -28,9 +28,10 @@ const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
     }
       const getDbProducts = await mongoProductManager.getProducts(Number(limit), page, category, sort);
       const { hasNextPage, hasPrevPage, nextPage, prevPage } = getDbProducts;
-      
       const products1 = "http://localhost:8080/api/products";
 
+      /*objeto agrega "nextLink" y "prevLink"  */
+      /*para la vista de productos se usa la direccion /products que esta en views.router */
       hasNextPage ? getDbProducts["nextLink"] = `${products1}?page=${nextPage}`
       : getDbProducts["nextLink"] = null;
       hasPrevPage ? getDbProducts["prevLink"] = `${products1}?page=${prevPage}` 

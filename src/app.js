@@ -4,6 +4,7 @@ const viewsRouter = require('./routes/views.router');
 const app = express();
 const createWebSocketServer = require('./webSocketServer');
 const handlebars = require('express-handlebars');
+const mongoose = require('mongoose');
 
 
 
@@ -15,6 +16,25 @@ console.log('Server is listening on port 8080...');
 const webSocketServer = createWebSocketServer(httpServer);
 /*Encerre toda las rutas de products.router en una funcion llamada returnRouter que tiene como parametro la configuracion del servidor websocket y poder usar las operaciones http*/
 const productsRouter = require('./routes/products.router')(webSocketServer);
+
+/*connexion a mongoDB*/
+const uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority';
+connect = async () => {
+    try {
+      mongoose.connect(uri, {
+         useNewUrlParser: true,
+         useUnifiedTopology: true
+      }); 
+       console.log('Connected to MongoDB Atlas', mongoose.connection.readyState);
+      
+     }
+    catch (e) {
+      console.error(e.message);
+        process.exit();
+       }
+  };
+
+ connect();
 
 
 app.use(express.json());
