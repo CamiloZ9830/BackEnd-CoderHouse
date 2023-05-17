@@ -55,7 +55,18 @@ router.get('/products', async (req, res) => {
         let page = parseInt(req.query.page) || 1;
         const category = req.query.category || {};
         const sort = req.query.sort || {};
+
+        const userName = req.session.userName;
+        let adminCredentials = null;
+        if (req.session.role === "Admin") {
+            const admin = req.session.role;
+            adminCredentials = {
+                userName,
+                admin
+            }          
+        };
         
+ 
         const getDbProducts = await mongoProductManager.getProducts(Number(limit), page, category, sort);
 
         if (page > getDbProducts.totalPages) {
@@ -66,7 +77,7 @@ router.get('/products', async (req, res) => {
         }
 
         const docs = getDbProducts.docs.map(product => Object.assign({}, product));
-        res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts });
+        res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts, userSession: userName, admin: adminCredentials });
         
     }
 
@@ -87,6 +98,27 @@ router.get('/carts/:cid/', async (req, res) => {
     catch (e) {
         res.status(500).json({message: `Error: ${e.message}`});
     }
+});
+
+
+router.get('/register', async (req, res) => {
+    try {
+        res.render('register', {});
+    }
+
+    catch (e) {
+         res.status(500).json({message: `Error: ${e.message}`});
+    }
+
+});
+
+router.get('/login', async (req, res) => {
+       try{
+        res.status(201).render('login', {})
+       }
+       catch (e) {
+           res.status(500).json({message: `Error: ${e.message}`});
+       }
 });
 
 

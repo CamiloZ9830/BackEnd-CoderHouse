@@ -102,7 +102,7 @@ router.post('/api/carts/:cid/product/:pid/',  async (req, res) => {
 router.put('/api/carts/:cid/product/:pid/', async (req, res) => {
         try {
                 const { quantity } = req.body;
-                   const { cid, pid } = req.params;
+                const { cid, pid } = req.params;
 
                     if (quantity > 0 && quantity < 11) {
 
@@ -171,9 +171,6 @@ router.delete('/api/carts/:cid',  async (req, res) => {
         }
 
 });
-
-
-
 
 
 

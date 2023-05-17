@@ -1,9 +1,14 @@
 const express = require('express');
 const cartsRouter = require('./routes/carts.router');
 const viewsRouter = require('./routes/views.router');
+const usersRouter = require('./routes/sessions.router');
 const app = express();
 const createWebSocketServer = require('./webSocketServer');
 const handlebars = require('express-handlebars');
+const cookieParser = require('cookie-parser');
+const MongoStore = require('connect-mongo');
+const session = require('express-session');
+
 const mongoose = require('mongoose');
 
 
@@ -35,23 +40,41 @@ connect = async () => {
   };
 
  connect();
-
+ 
+ /*Configuracion de Handlebars*/
+ app.engine('handlebars', handlebars.engine());
+ app.set('views', __dirname + '/views');
+ app.set('view engine', 'handlebars');
+ 
+ /*static-path */
+ app.use(express.static(__dirname + '/public'));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+/*cookie parser */
+app.use(cookieParser());
 
-/*Configuracion de Handlebars*/
-app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
-app.set('view engine', 'handlebars');
+/*Manager de sesion*/
+app.use(session({
+  store: MongoStore.create({
+    mongoUrl: uri,
+    mongoOptions: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+      },
+      ttl: 300
+  }),
+  secret: "itsasecret",
+  resave: true,
+  saveUninitialized: true
+}));
 
 
-app.use(express.static(__dirname + '/public'));
-
-
+/*rutas */
 app.use('/', productsRouter);
 app.use('/', cartsRouter);
 app.use('/', viewsRouter);
+app.use('/', usersRouter);
 
 
 

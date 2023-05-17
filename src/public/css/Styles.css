@@ -75,8 +75,7 @@ input:focus {
     color: #2b2d42;
     font-size: 30px;
     padding: 5px;
-    border-radius: 4px;
-    
+    border-radius: 4px; 
 }
 
 .cantidad_Prod {

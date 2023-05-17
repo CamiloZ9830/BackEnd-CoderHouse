@@ -1,6 +1,17 @@
+{{#if userSession}}
+    <h1>Bienvenido {{admin.admin}}!  {{userSession}} </h1> 
+    <a href="/logout">Cerrar sesión</a>
+{{else}}
+    <h1>Te damos la Bienvenida!!</h1>
+    <a href='/register'>Registrarse</a></br></br>
+    <a href='/login'>Iniciar Sesion</a>
+{{/if}}
+
+
+    
 
     <h1>Listado de productos</h1>
-     
+
        <div class="shop">
         {{#if getDbCart}}
           {{#each getDbCart.products}}
