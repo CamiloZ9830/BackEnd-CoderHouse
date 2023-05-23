@@ -7,7 +7,7 @@ const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
 
   const filePath = path.resolve(__dirname, '../dao/fs/products-file.json');
   const callNewProduct = new ProductManager(filePath);
-  /*crear nueva instancia*/
+
   const mongoProductManager = new mongoDBProductsManager();
   
   

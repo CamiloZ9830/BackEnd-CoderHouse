@@ -1,5 +1,5 @@
 {{#if userSession}}
-    <h1>Bienvenido {{admin.admin}}!  {{userSession}} </h1> 
+    <h1>Bienvenido {{userSession.role}}!  {{userSession.userName}} </h1> 
     <a href="/logout">Cerrar sesión</a>
 {{else}}
     <h1>Te damos la Bienvenida!!</h1>

@@ -373,6 +373,31 @@ table td {
     transition: 0.2s all ease;
 }
 
+.center-button {
+    display: flex;
+    justify-content: center;
+    height: 100vh; 
+  }
+
+.github-button {
+    display: inline-block;
+    background-color: #24292e;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .github-button:hover {
+    background-color: #0366d6;
+  }
+
 footer {
     position: absolute;
     right: 0;

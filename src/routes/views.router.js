@@ -1,7 +1,6 @@
 const { Router } = require('express');
 //const ProductManager = require('../dao/fs/ProductManager');
 const router = Router();
-const path = require('path');
 const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
 const mongoProductManager = new mongoDBProductsManager();
 const mongoDBCartsManager = require('../dao/mongoDB/mongoCartsManager');
@@ -13,7 +12,7 @@ const mongoCartsManager = new mongoDBCartsManager();
 
 router.get('/', async (req, res) => {
     try {
-        res.render('home', {});
+        res.redirect('login');
     }
 
     catch (e) {
@@ -56,15 +55,8 @@ router.get('/products', async (req, res) => {
         const category = req.query.category || {};
         const sort = req.query.sort || {};
 
-        const userName = req.session.userName;
-        let adminCredentials = null;
-        if (req.session.role === "Admin") {
-            const admin = req.session.role;
-            adminCredentials = {
-                userName,
-                admin
-            }          
-        };
+        const user = req.session.user;
+        console.log("this is a user", user);
         
  
         const getDbProducts = await mongoProductManager.getProducts(Number(limit), page, category, sort);
@@ -77,7 +69,7 @@ router.get('/products', async (req, res) => {
         }
 
         const docs = getDbProducts.docs.map(product => Object.assign({}, product));
-        res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts, userSession: userName, admin: adminCredentials });
+        res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts, userSession: user});
         
     }
 

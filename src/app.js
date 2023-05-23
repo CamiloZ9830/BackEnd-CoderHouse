@@ -1,15 +1,16 @@
 const express = require('express');
+const app = express();
 const cartsRouter = require('./routes/carts.router');
 const viewsRouter = require('./routes/views.router');
 const usersRouter = require('./routes/sessions.router');
-const app = express();
 const createWebSocketServer = require('./webSocketServer');
 const handlebars = require('express-handlebars');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
-
 const mongoose = require('mongoose');
+const initializePassport = require('./config/passport.config');
+const passport = require('passport');
 
 
 
@@ -69,6 +70,9 @@ app.use(session({
   saveUninitialized: true
 }));
 
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 /*rutas */
 app.use('/', productsRouter);

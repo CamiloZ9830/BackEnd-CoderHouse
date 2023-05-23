@@ -1,15 +1,25 @@
-const multer = require('multer');
+const bcrypt = require('bcrypt');
 
+function hashPassword(password) {
+  const saltRounds = 10;
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  return hashedPassword;
+}
 
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, __dirname+'/public/images')
-    },
+function comparePasswords(password, hashedPassword) {
+  const isMatch = bcrypt.compareSync(password, hashedPassword);
+  return isMatch;
+}
 
-    filename: function(req, file, cb){
-        cb(null, file.originalname)
-    } 
-})
+const getAge = (dateString) => {
+    let today = new Date();
+    let birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    let m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
 
-
-module.exports = multer({storage});
+module.exports = { hashPassword, comparePasswords, getAge };
