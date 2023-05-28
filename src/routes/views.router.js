@@ -1,6 +1,7 @@
 const { Router } = require('express');
 //const ProductManager = require('../dao/fs/ProductManager');
 const router = Router();
+const path = require('path');
 const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
 const mongoProductManager = new mongoDBProductsManager();
 const mongoDBCartsManager = require('../dao/mongoDB/mongoCartsManager');
@@ -12,7 +13,7 @@ const mongoCartsManager = new mongoDBCartsManager();
 
 router.get('/', async (req, res) => {
     try {
-        res.redirect('login');
+        res.render('home', {});
     }
 
     catch (e) {
@@ -47,8 +48,24 @@ router.get('/realTimeChat', async (req, res) => {
     }
 });
 
+
+const isAuthenticatedView = async (req, res, next) => {
+      if (req.session.user) {
+        console.log("this is sessions: ", req.session.user);
+        next();
+        return;
+      }  
+
+      if (req.session.role === "Admin"){
+        next();
+        return;
+      }
+      
+      res.render('login', {});
+}; 
+
 /* se usas queries como limit, page, product category (RoadBikes, ElectricBikes, accesorios etc.) y sort */
-router.get('/products', async (req, res) => {
+router.get('/products', isAuthenticatedView, async (req, res) => {
     try {
         const limit = req.query.limit || 8;
         let page = parseInt(req.query.page) || 1;
@@ -56,7 +73,13 @@ router.get('/products', async (req, res) => {
         const sort = req.query.sort || {};
 
         const user = req.session.user;
-        console.log("this is a user", user);
+        let adminCredentials = null;
+        if (req.session.role === "Admin") {
+            adminCredentials = {
+                user: user.userName,
+                admin: req.session.role
+            }          
+        };
         
  
         const getDbProducts = await mongoProductManager.getProducts(Number(limit), page, category, sort);
@@ -69,7 +92,7 @@ router.get('/products', async (req, res) => {
         }
 
         const docs = getDbProducts.docs.map(product => Object.assign({}, product));
-        res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts, userSession: user});
+        res.render('home', { paginatedDocs: docs, paginatedInfo: getDbProducts, userSession: user, admin: adminCredentials });
         
     }
 

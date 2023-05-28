@@ -7,14 +7,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         inmutable: true,
-        default: ''
     },
     lastName: {
         type: String,
         required: true,
-        inmutable: true,
-        default: ''
-        },
+        inmutable: true
+    },
     userName: {
         type: String,
         required: true,
@@ -23,29 +21,27 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         lowercase: true,
+        required: true,
         inmutable: true,
-        default: ''
+        validate: {
+            validator: value => { return  /\S+@\S+\.\S+/.test(value) },
+         message: 'Please enter a valid email'
+      }
     },
     dateOfBirth: {
         type: String,
-        inmutable: true,
-        default: ''
+        inmutable: true
     },
     password: {
         type: String,
-        required: true,
-        default: ''
+        required: true
     },
     role: {
         type: String,
-        default: "user"
+        default: "User"
     },
-    createdAt: {
+    timestamp: {
         inmutable: true,
-        type: Date,
-        default: () => Date.now()
-    },
-    updatedAt: {
         type: Date,
         default: () => Date.now()
     }

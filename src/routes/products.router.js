@@ -13,7 +13,18 @@ const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
   
   const returnRouter = function(io) {
 
-  router.get('/api/products/', async (req, res) => {
+
+    const isAuthenticated = async (req, res, next) => {
+      if (req.session.user) {
+        console.log("this is sessions: ", req.session.user);
+        next();
+        return;
+      }  
+      
+      res.status(401).send({status: "ERROR", error: "Not Authenticated."})
+}; 
+
+  router.get('/api/products/', isAuthenticated, async (req, res) => {
     //const products =  await callNewProduct.getProducts(); 
     //res.status(200).send({status: 'success', payload: getDbProducts}); 
     //const prod = products.slice(0, Number(limit)); 
