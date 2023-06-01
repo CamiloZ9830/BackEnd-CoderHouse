@@ -24,9 +24,10 @@ class mongoDbCartsManager {
 
        
       getCartByIdPopulate = async (id) => {
-        try{          
+        try{         
             const getCart = await cartsModel.findById(id)
             .populate('products.product', ['title', 'description', 'price', 'thumbnail', 'code', 'category']).lean();
+            console.log(getCart);
             return getCart;
         }
         catch (e) {
@@ -40,7 +41,7 @@ class mongoDbCartsManager {
         const newCart = {};
               try{
                  const createCart =  await cartsModel.create(newCart);
-                 return `cart id is: ${createCart._id}`;
+                 return createCart._id;
               }
 
               catch (e) {

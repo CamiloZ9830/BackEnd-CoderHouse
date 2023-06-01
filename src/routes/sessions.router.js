@@ -1,121 +1,104 @@
 const { Router } = require('express');
+const { emailValidator, userNameValidator } = require('../middlewares/router.middlewares/router.middlewares');
+const mongoDBUsersManager = require('../dao/mongoDB/mongoUsersManager');
+const mongoDBCartsManager = require('../dao/mongoDB/mongoCartsManager');
 const router = Router();
-const mongoDbUsersManager = require('../dao/mongoDB/mongoUsersManager');
-const mongoUserManager = new mongoDbUsersManager;
+const passport = require('passport');
+const { hashPassword, comparePasswords, generateToken } = require('../utils');
 
+const mongoUsersManager = new mongoDBUsersManager();
+const mongoCartsManager = new mongoDBCartsManager();
 
-const userNameValidator = async (req, res, next) => {
-    
-        const {userName} = req.body;
-        const field = {"userName" : userName}
-        const userNameExists = await mongoUserManager.fieldValidator(field);
-        console.log("validator: ", userNameExists);
-        
-        if(!userNameExists) {
-            next();
-            return;
-        }
-        else {
-            res.status(404).send('Your username is already taken');
-        }
-};
-
-
-const emailValidator = async (req, res, next) => {
-       const { email } = req.body;
-       const field = {"email" : email};
-       const emailExists = await mongoUserManager.fieldValidator(field);
-       console.log("validator: ", emailExists);
-
-       if(!emailExists) {
-        next();
-        return;
-       }
-       else {
-           res.status(404).send('Your email is already taken');
-       }
-};
-
-const logInValidator = async (req, res, next) => {
-    const { userName, password } = req.body;
-    const userLogIn = await mongoUserManager.userLogIn(userName, password);
-    console.log("user: ",password);
-    if (userLogIn) {
-        if(userName === userLogIn.userName && password === userLogIn.password) {
-            req.session.user = userLogIn;
-            next();
-            return;  
-        }
-    }
-    if(userName === "adminCoder@coder.com" && password === "admin123"){
-        req.session.role = "Admin";
-        req.session.user = {userName};
-        console.log("this Admin is: ", req.session.user);
-        next();
-        return;
-    }
-    res.status(401).send({status: "ERROR", error: "Invalid Credentials"})
-    
-    
-};
-
-
+/*registra a un usuario usando la estrategia passport-jwt y le asigna un carrito recien creado */
 router.post('/registration', userNameValidator, emailValidator, async (req, res) => {
-       try {
-           const {firstName, lastName, userName, dateOfBirth, email, password} = req.body;
-           
-           const newUser = {
-                firstName,
-                lastName,
-                userName,
-                dateOfBirth,
-                email,
-                password
-            };
-
-           const addNewUser = await mongoUserManager.registerUser(newUser);
-           res.cookie('aCookie', "success", {maxAge: 10000}).status(201).send({status: "success", payload: {message: "New user has been registered succesfully",
-                                                              username: addNewUser.userName,
-                                                              email: addNewUser.email
-                                                             }
-                                                            });      
-       }
-       catch (e) {
-          res.status(500).json({message: e.message});
-       }
-});
-
-router.post('/login', logInValidator, async (req, res) => {
-    try{
-         console.log("the name is :", req.session.user);
-         res.cookie('aCookie', JSON.stringify(req.session.user), {maxAge: 10000}).status(201).redirect('/products');
-    }
-
-    catch (e) {
-        res.status(500).json({message: e.message});
-    }
-});
-
-router.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Error destroying session:', err);
+    const {firstName, lastName, userName, email, dateOfBirth, password} = req.body;
+        const user = {
+            firstName,
+            lastName,
+            userName,
+            email,
+            dateOfBirth,
+            password: hashPassword(password),
         }
-        res.redirect('/login'); 
-    });
+        try {
+            let saveUser = await mongoUsersManager.registerUser(user);
+            /*const access_token = generateToken(user);
+            console.log(access_token);*/
+            if(saveUser) {
+                try{
+                    const createCart = await mongoCartsManager.addCart();
+                     if(!createCart) return console.log("error creating cart");
+                      saveUser["cartId"] = createCart;
+                      const saveUserWithCartId = await mongoUsersManager.updateUserAttribute(saveUser._id, createCart._id);
+                         if(!saveUserWithCartId) return console.log("could not assign a cartId to the new user");
+                         res.status(201)./*cookie('jwtCookieToken', access_token, {
+                            maxAge: 5*60*100,
+                            httpOnly: true
+                        }).*/send({status: "success", message: "User registered"})
+                         return saveUserWithCartId;                  
+                }
+                catch(e) {
+                    console.error(e.message);
+                }
+
+            }
+
+            else {
+                res.status(400).send({status: "error", message: "Could not save new user"}); 
+            }
+            
+            return saveUser
+        }
+        catch(e) {
+            console.error(e.message);
+        }   
+       
 });
 
 
-router.get('/api/session', async (req, res) => {
-/*if (req.session.counter){
-        req.session.counter ++;
-        res.send(`Se ha visitado el sitio ${res.session.counter} veces`)
+/*login de usuarios con la estrategia passport-jwt*/
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try{
+        const user = await mongoUsersManager.userLogIn(email);
+        if(!user) return res.status(400).send({status: "error", error: "Invalid email"});
+        if(!comparePasswords(password, user.password)) return res.status(400).send({status: "error", error: "Invalid password"});
+        const access_token = generateToken(user);
+        res.cookie('jwtCookieToken', access_token, {
+            maxAge: 5 * 60 * 1000,
+            httpOnly: true
+        }).redirect(`/products?access_token=${access_token}`);
     }
-    else {
-        req.session.counter = 1;
-        res.send(`Bienvenido! ${req.session.counter}`)
-    }*/
-     res.cookie('aCookie', "Esta es una cookie", {maxAge: 10000}).send("cookie seteada");
+    catch(e) {
+        console.error(e.message);
+    } 
+});
+
+
+/*des-loguea un usuario de github o de jwt */
+router.get('/logout', (req, res) => {
+    if (req.isAuthenticated() && req.session.user.lastName === 'github'){
+       
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session:', err);
+            }
+        });
+    };
+        res.clearCookie("jwtCookieToken");
+        res.status(200).redirect('/login'); 
+});
+
+router.get('/api/session/github', passport.authenticate('github', {scope:['user:email']}), async (req, res) => {});
+
+router.get('/api/session/githubcallback', passport.authenticate('github', {failureRedirect: '/login'}), async(req, res) => {
+    req.session.user = req.user;
+    res.status(200).redirect('/products');
+});
+
+router.get('/current', passport.authenticate('jwt', {session: false}), (req, res) => {
+    res.send(req.user);
 });
 
 module.exports = router;

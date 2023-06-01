@@ -3,6 +3,7 @@ const ProductManager = require('../dao/fs/ProductManager');
 const router = Router();
 const path = require('path');
 const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
+const passport = require('passport');
 
 
   const filePath = path.resolve(__dirname, '../dao/fs/products-file.json');
@@ -13,18 +14,7 @@ const mongoDBProductsManager = require('../dao/mongoDB/mongoProductManager');
   
   const returnRouter = function(io) {
 
-
-    const isAuthenticated = async (req, res, next) => {
-      if (req.session.user) {
-        console.log("this is sessions: ", req.session.user);
-        next();
-        return;
-      }  
-      
-      res.status(401).send({status: "ERROR", error: "Not Authenticated."})
-}; 
-
-  router.get('/api/products/', isAuthenticated, async (req, res) => {
+  router.get('/api/products/',  passport.authenticate('jwt', {session: false}), async (req, res) => {
     //const products =  await callNewProduct.getProducts(); 
     //res.status(200).send({status: 'success', payload: getDbProducts}); 
     //const prod = products.slice(0, Number(limit)); 

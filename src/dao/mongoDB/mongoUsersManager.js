@@ -23,6 +23,28 @@ class mongoDBUsersManager {
             console.error(e.message);
           }  
      };
+
+     updateUserAttribute = async (userId, newAttrValue) => {
+            try {
+                const update = await userModel.updateOne(
+                    {_id: userId},
+                    {$set: {"cartId": newAttrValue } }
+                );
+
+                if(update.modifiedCount === 1) {
+                    console.log("User attribute updated succesfully");
+                    const user = userModel.findById(userId);
+                    return user;
+                }
+                else {
+                    console.log('User not found or attribute value unchanged');
+                  }
+            }
+
+            catch(e) {
+                console.error(e.message);
+            }
+     };
    
      
      registerUser = async (userRegistrationData) => {
@@ -35,9 +57,9 @@ class mongoDBUsersManager {
         }
      };
 
-     userLogIn = async (userName) => {
+     userLogIn = async (email) => {
            try{
-            const getUser = await userModel.findOne({"userName" : userName});          
+            const getUser = await userModel.findOne({"email" : email});          
             return getUser;
            }
            catch(e) {

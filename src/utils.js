@@ -1,4 +1,7 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const PRIVATE_KEY = "JWTPrivateKey";
 
 function hashPassword(password) {
   const saltRounds = 10;
@@ -22,4 +25,26 @@ const getAge = (dateString) => {
     return age;
 };
 
-module.exports = { hashPassword, comparePasswords, getAge };
+const generateToken = (user) => {
+  const token = jwt.sign({user}, PRIVATE_KEY, {expiresIn: '5m'});
+  return token;
+};
+
+const authenticateToken = (req, res, next) => {
+  const token = req.cookies.jwtCookieToken;
+  if (!token) return res.status(401).send({
+    error: "Not authenticated"
+  });
+
+  jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
+    if (error) return res.status(403).send({error: "Not authorized"});
+    console.log("what is this", credentials);
+    req.user = credentials.user;
+    next();
+  });
+};
+
+
+
+module.exports = { hashPassword, comparePasswords, getAge,
+                   generateToken, authenticateToken };

@@ -74,6 +74,7 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 /*rutas */
 app.use('/', productsRouter);
 app.use('/', cartsRouter);

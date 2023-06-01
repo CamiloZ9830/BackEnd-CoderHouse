@@ -1,11 +1,21 @@
+<div class = "navbar">
+<div class="paginas"> 
+<a href="/carts/{{userSession.cartId}}">go to cart<div class="carrito">
+              <img src="https://png.pngtree.com/element_our/20190531/ourmid/pngtree-shopping-cart-convenient-icon-image_1287807.jpg" width="40"/>                  
+        <div  class="cantidad_Prod">{{total}} </div> 
+      </div></a>
+  </div>
+
 {{#if userSession}}
-    <h1>Bienvenido {{admin.admin}}!  {{userSession.userName}} </h1> 
+    <h1>Bienvenido {{userSession.role}}!  {{userSession.userName}}</h1> 
     <a href="/logout">Cerrar sesión</a>
 {{else}}
     <h1>Te damos la Bienvenida!!</h1>
     <a href='/register'>Registrarse</a></br></br>
     <a href='/login'>Iniciar Sesion</a>
 {{/if}}
+  </div>
+
 
 
     
@@ -42,8 +52,13 @@
                       <div class="precio-cantidad">
                           <h3>$ {{this._doc.price}}</h3>                          
                       </div>                     
-                    </div>                                
-                      <button class="button-33">Agregar al carrito</button>  
+                    </div>  
+                    {{#if ../userSession}}                              
+                      <form action="/carts/{{../userSession.cartId}}/product/{{this._doc._id}}" method="POST">
+  <input type="hidden" name="productId" value="{{this._doc._id}}">
+  <button class="button-33" type="submit">Agregar al carrito</button>
+</form>
+{{/if}}   
               </div>
               
           {{/each}}
