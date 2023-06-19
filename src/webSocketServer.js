@@ -1,5 +1,5 @@
 const { Server } = require('socket.io');
-const mongoDbChatsManager = require('./dao/mongoDB/mongoChatManager');
+const mongoDbChatsManager = require('./dao/mongoDao/mongoChatDao');
 
 
 const mongoChatManager = new mongoDbChatsManager();

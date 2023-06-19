@@ -1,7 +1,7 @@
-const mongoDBUsersManager = require('../../dao/mongoDB/mongoUsersManager');
+const MongoUsersDao = require('../../dao/mongoDao/mongoUsersDao');
 
 
-const mongoUsersManager = new mongoDBUsersManager();
+const mongoUsersManager = new MongoUsersDao();
 
 
 const userNameValidator = async (req, res, next) => {
@@ -40,8 +40,46 @@ const emailValidator = async (req, res, next) => {
     }
 };
 
+const objectValidation = (req, res, next) => {
+    const product = req.body;
+    const requiredAttrs = ['title', 'description', 'price', 'thumbnail', 'code', 'stock', 'category'];
+    const isValid = requiredAttrs.every(attr => product.hasOwnProperty(attr) && product[attr]);
+  
+    if (isValid) {
+      next();
+      return
+    } else {
+      res.status(404).send('Invalid product object');
+    }
+  };
+
+  const objectValidationUpdate = (req, res, next) => {
+  
+    const product = req.body;
+    const requiredAttrs = ['title', 'description', 'price', 'thumbnail', 'code', 'stock', 'status', 'category'];
+    const validAttrs = Object.keys(product).every(attr => requiredAttrs.includes(attr));
+    const isValid = validAttrs && requiredAttrs.every(attr => !product.hasOwnProperty(attr) || product[attr] !== null);
+  
+    if (isValid) {
+      
+      Object.keys(product).forEach(key => {
+        if (product[key] === null) {
+          delete product[key];
+        }
+      });
+  
+      req.body = product;
+      next();
+      return;
+    } else {
+      res.status(404).send('Invalid attribute(s) in object');
+    }
+  };
+
 
 module.exports = {
     emailValidator,
-    userNameValidator
+    userNameValidator,
+    objectValidation,
+    objectValidationUpdate
 }

@@ -1,8 +1,7 @@
-const mongoose = require('mongoose');
-const chatModel = require('../models/chat.models');
+const chatModel = require('../modelsMongo/chat.models');
 
 
-class mongoDbChatsManager {
+class MongoChatManager {
     constructor () {
         this.uri = null;
         this.connection = null
@@ -24,4 +23,4 @@ class mongoDbChatsManager {
     };
 
 
-    module.exports = mongoDbChatsManager;
+    module.exports = MongoChatManager;

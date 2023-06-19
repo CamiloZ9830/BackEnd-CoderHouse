@@ -1,6 +1,6 @@
 const {readFile, writeFile, existsSync} = require('fs');
 const util = require('util');
-const ProductManager = require('../fs/ProductManager');
+const ProductManager = require('../fsDao/ProductManager');
 const readFilePromise = util.promisify(readFile);
 const writeFilePromise = util.promisify(writeFile);
 const path = require('path');

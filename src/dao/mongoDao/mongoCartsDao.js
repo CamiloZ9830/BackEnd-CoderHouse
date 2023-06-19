@@ -1,14 +1,9 @@
 const mongoose = require('mongoose');
-const cartsModel = require('../models/carts.model');
+const cartsModel = require('../modelsMongo/carts.model');
 
 
-class mongoDbCartsManager {
+class MongoCartsDao {
     constructor () {
-      this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority'
-        this.connection = mongoose.connect(this.uri, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true
-       }); 
         this.carts = cartsModel
     }
 
@@ -278,4 +273,4 @@ class mongoDbCartsManager {
 
 
 
-module.exports = mongoDbCartsManager;
+module.exports = MongoCartsDao;

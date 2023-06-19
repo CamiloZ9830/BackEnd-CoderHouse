@@ -1,15 +1,12 @@
-const mongoose = require('mongoose');
-const userModel = require('../models/users.model');
+
+const userModel = require('../modelsMongo/users.model');
+const mongoCartsDao = require('../mongoDao/mongoCartsDao');
 
 
-class mongoDBUsersManager {
+class MongoUsersDao {
     constructor() {
-        this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority';
-        this.connection = mongoose.connect(this.uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
         this.user = userModel
+        this.cart = new mongoCartsDao()
     }
 
     
@@ -49,8 +46,25 @@ class mongoDBUsersManager {
      
      registerUser = async (userRegistrationData) => {
         try{
-            const register = await userModel.create(userRegistrationData);
-            return register;
+            let saveUser = await userModel.create(userRegistrationData);
+            if(saveUser) {
+                try{
+                    const createCart = await this.cart.addCart();
+                     if(!createCart) return console.log("error creating cart");
+                      saveUser["cartId"] = createCart;
+                      const saveUserWithCartId = await this.updateUserAttribute(saveUser._id, createCart._id);
+                         if(!saveUserWithCartId) return console.log("could not assign a cartId to the new user");
+                         return saveUserWithCartId;                  
+                }
+                catch(e) {
+                    console.error(e.message);
+                }
+
+            }
+
+            else {
+                console.log({status: "error", message: "Error saving user"});
+            }
         }
         catch (e) {
             console.error(e.message);
@@ -72,4 +86,4 @@ class mongoDBUsersManager {
 
 };
 
-module.exports = mongoDBUsersManager;
+module.exports = MongoUsersDao;

@@ -1,13 +1,8 @@
-const mongoose = require('mongoose');
-const productsModel = require('../models/products.model')
 
-class mongoDBProductsManager {
+const productsModel = require('../modelsMongo/products.model')
+
+class MongoDBProductsManager {
     constructor () {
-      this.uri = 'mongodb+srv://juanzora:JnzR43GjwHnIfd42@cluster1store.qiis50v.mongodb.net/?retryWrites=true&w=majority'
-      this.connection = mongoose.connect(this.uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-     }); 
       this.carts = productsModel
     }
 
@@ -106,4 +101,4 @@ class mongoDBProductsManager {
 };
 
 
-module.exports = mongoDBProductsManager;
+module.exports = MongoDBProductsManager;
