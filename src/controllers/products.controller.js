@@ -1,6 +1,6 @@
 const CartService = require('../services/cart.service');
 const ProductService = require('../services/products.service');
-const { getAge } = require('../utils');
+const { getAge } = require('../utils/session.utils');
 
 
 class ProductsController {
@@ -24,19 +24,12 @@ class ProductsController {
                 
                 let user = structuredClone(req.user);
                 user["age"] = getAge(user.dateOfBirth);
+                console.log("this user:", user);
         
         
                 const getDbProducts = await this.productService.getProducts(Number(limit), page, category, sort);
         
-                const { hasNextPage, hasPrevPage, nextPage, prevPage } = getDbProducts;
-                const products1 = "http://localhost:8080/api/products";
-          
-                /*objeto agrega "nextLink" y "prevLink"  */
-                /*para la vista de productos se usa la direccion /products que esta en views.router */
-                hasNextPage ? getDbProducts["nextLink"] = `${products1}?page=${nextPage}`
-                : getDbProducts["nextLink"] = null;
-                hasPrevPage ? getDbProducts["prevLink"] = `${products1}?page=${prevPage}` 
-                : getDbProducts["prevLink"] = null;
+               
 
                 if (page > getDbProducts.totalPages) {
                     return res.redirect(`/products?page=${getDbProducts.totalPages}`);         
@@ -70,8 +63,9 @@ class ProductsController {
                 const { pid } = req.params;         
                 const findProduct = await this.productService.findProductById(pid);
                       
-                    if (findProduct) return res.status(200).send({status: 'success', payload: findProduct});
-                    return res.status(404).send({status: 'error', message: `Product with number ID ${pid} was not found`});
+                    if (!findProduct) return res.status(404).send({status: 'error', message: `Product with number ID ${pid} was not found`});
+                     return res.status(200).send({status: 'success', payload: findProduct});
+                    
                                 
             } catch (e) {
                 res.status(500).json({message: `Error: ${e.message}`});
@@ -83,7 +77,8 @@ class ProductsController {
             const { pid } = req.params;
             const product = req.body;             
                  const updatedProduct = await this.productService.updateProductById(pid, product);
-              if (updatedProduct) return res.status(201).send({status: 'success', payload: updatedProduct});
+              if (!updatedProduct) return res.status(404).send({status: 'error', message: "Product could not be updated"});
+              return res.status(201).send({status: 'success', payload: updatedProduct});
             
           } catch (e) {
             res.status(500).json({message: `Error: ${e.message}`});

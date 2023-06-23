@@ -16,6 +16,7 @@ const httpServer = app.listen(port, () => {
 console.log(`Server is listening on port ${port}...`);
 }); 
 
+
 /*Servidor websocket instanciado con la configuracion del servidor http de express*/
 const webSocketServer = createWebSocketServer(httpServer);
 /*Encerre toda las rutas de products.router en una funcion llamada returnRouter que tiene como parametro la configuracion del servidor websocket y poder usar las operaciones http*/

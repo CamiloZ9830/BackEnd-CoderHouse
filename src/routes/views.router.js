@@ -1,9 +1,9 @@
 const { Router } = require('express');
 //const ProductManager = require('../dao/fsDao/ProductManager');
 const router = Router();
-const passport = require('passport');
 const ProductsController = require('../controllers/products.controller');
 const CartController = require('../controllers/cart.controller');
+const { passportCall, handlePermissions } = require('../utils/authorization.utils');
 
 
 const productsController = new ProductsController();
@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/realTimeProducts', async (req, res) => {
+router.get('/realTimeProducts', passportCall('jwt'), handlePermissions(["ADMIN"]), async (req, res) => {
     try {
         
         const getProducts = await callNewProduct.getProducts();
@@ -39,10 +39,11 @@ router.get('/realTimeProducts', async (req, res) => {
 });
 
 
-router.get('/realTimeChat', async (req, res) => {
+router.get('/realTimeChat', passportCall('jwt'), handlePermissions(["USER"]), async (req, res) => {
     try {
-     
-          res.render('chat', {});
+        const user = {email: req.user.email, userName: req.user.userName}
+
+          res.render('chat', {user: user});
      
     }
     catch (e) {
@@ -53,14 +54,15 @@ router.get('/realTimeChat', async (req, res) => {
 
 
 /* se usas queries como limit, page, product category (RoadBikes, ElectricBikes, accesorios etc.) y sort */
-router.get('/products', passport.authenticate('jwt', { session: false }), productsController.getProducts);
+router.get('/products', passportCall('jwt'), productsController.getProducts);
 
 /*Esta ruta renderiza los productos del carrito de un suario por id de carrito */
-router.get('/carts/:cid/', passport.authenticate('jwt', {session: false}), cartController.getCartByIdPopulate);
+router.get('/carts/:cid/', passportCall('jwt'), cartController.getCartByIdPopulate);
 
 /*ruta de handlebars view para agregar un producto al carrito de un usuario logueado con la estrategia jwt */
-router.post('/carts/:cid/product/:pid', passport.authenticate('jwt', {session: false}), cartController.addProductId);
+router.post('/carts/:cid/product/:pid', passportCall('jwt'), cartController.addProductId);
 
+router.post('/carts/:cid/purchase',passportCall('jwt'), cartController.purchaseOrder);
 
 router.get('/register', async (req, res) => {
     try {

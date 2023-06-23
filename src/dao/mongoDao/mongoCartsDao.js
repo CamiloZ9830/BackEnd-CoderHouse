@@ -4,12 +4,12 @@ const cartsModel = require('../modelsMongo/carts.model');
 
 class MongoCartsDao {
     constructor () {
-        this.carts = cartsModel
+        this.model = cartsModel
     }
 
       getCartById = async (id) => {
       try{
-        const getCart = await cartsModel.findById(id)
+        const getCart = await this.model.findById(id)
         return getCart;
     }
     catch (e) {
@@ -20,9 +20,8 @@ class MongoCartsDao {
        
       getCartByIdPopulate = async (id) => {
         try{         
-            const getCart = await cartsModel.findById(id)
+            const getCart = await this.model.findById(id)
             .populate('products.product', ['title', 'description', 'price', 'thumbnail', 'code', 'category']).lean();
-            console.log(getCart);
             return getCart;
         }
         catch (e) {
@@ -32,10 +31,9 @@ class MongoCartsDao {
         
 
      
-       addCart = async () => {
-        const newCart = {};
+       addCart = async (newCart) => {
               try{
-                 const createCart =  await cartsModel.create(newCart);
+                 const createCart =  await this.model.create(newCart);
                  return createCart._id;
               }
 
@@ -73,13 +71,13 @@ class MongoCartsDao {
        /*agrega el producto o si ya existe suma +1 a la quantity*/
        addProductId = async (cartId, prodId) => {
         try {
-          const result = await cartsModel.updateOne(
+          const result = await this.model.updateOne(
             { _id: cartId, 'products.product': prodId },
             { $inc: { 'products.$.quantity': 1 } }
           );
                console.log(result);
           if (result.modifiedCount === 0) {
-            await cartsModel.updateOne(
+            await this.model.updateOne(
               { _id: cartId },
               { $addToSet: { products: { product: prodId, quantity: 1 } } }
             );
@@ -92,7 +90,7 @@ class MongoCartsDao {
 
       /*addProductId = async (cartId, prodId) => {
         try {
-          const result = await cartsModel.updateOne(
+          const result = await this.cart.updateOne(
             { _id: cartId, 'products.product': prodId },
             { $inc: { 'products.$.quantity': 1 } },
             {upsert: true}
@@ -134,7 +132,7 @@ class MongoCartsDao {
          /*modifica el carrito con un nuevo arreglo de productos*/
          addNewArrayOfProducts = async (cartId, arrayProd) => {
            try {
-              const updateArrayCart = await cartsModel.findByIdAndUpdate(
+                 await this.model.findByIdAndUpdate(
                 { _id: cartId },
                 { $set: { "products": arrayProd } }             
               )
@@ -146,11 +144,25 @@ class MongoCartsDao {
 
          };
 
+         removeProductsFromCart = async (cartId, arrayProdId) => {
+          try {
+                await this.model.updateMany(
+               { _id: cartId },
+               { $pull: { products: { product: { $in: arrayProdId } } } }           
+             )
+             return "Updated";
+          }
+          catch (e) {
+           console.error(e.message);
+          }
+
+        };
+
 
        /*modifica la quantity del producto pasado por el req.body*/
        addProductQuantity = async (cartId, prodId, qty) => {
           try {
-            const updatedCart = await cartsModel.findOneAndUpdate(
+            const updatedCart = await this.model.findOneAndUpdate(
               {
                 _id: cartId,
                 "products.product": prodId,
@@ -179,7 +191,7 @@ class MongoCartsDao {
                   
                 if (index > -1) {
                   if (products[index].quantity === 1) {
-                    await cartsModel.updateOne({ _id: cartId },
+                    await this.cart.updateOne({ _id: cartId },
                     { $pull: { products: { product: prodId } } });
                     return `Product ID ${prodId} deleted succesfully`
                   }
@@ -202,12 +214,12 @@ class MongoCartsDao {
         /*elimina un producto del carrito y si la cantidad el mas de uno resta -1 al quantity*/
     deleteProductId = async (cartId, prodId) => {
       try {
-       await cartsModel.updateOne(
+       await this.cart.updateOne(
           { _id: cartId, 'products.product': prodId },
           { $inc: { 'products.$.quantity': -1 } }
         );
     
-        const deleteProduct = await cartsModel.updateOne(
+        const deleteProduct = await this.model.updateOne(
           { _id: cartId },
           { $pull: { products: { product: prodId, quantity: 0 } } }
         );
@@ -242,7 +254,7 @@ class MongoCartsDao {
      /*elimina todos los productos del carrito*/
     deleteAllProducts = async (cartId) => {
       try {
-        const deleteAll = await cartsModel.updateOne(
+        const deleteAll = await this.model.updateOne(
           { _id: cartId },
           { $set: { products: [] } }
         );

@@ -14,16 +14,12 @@ router.post('/registration', userNameValidator, emailValidator, userController.r
 /*login de usuarios con la estrategia passport-jwt*/
 router.post('/login', userController.userLogin);
 
-
 /*des-loguea un usuario de github o de jwt */
 router.get('/logout', userController.userLogout);
 
 router.get('/api/session/github', passport.authenticate('github', {scope:['user:email']}), async (req, res) => {});
 
-router.get('/api/session/githubcallback', passport.authenticate('github', {failureRedirect: '/login'}), async(req, res) => {
-  
-    res.status(200).redirect('/products');
-});
+router.get('/api/session/githubcallback', passport.authenticate('github', {session: false, failureRedirect: '/login'}), userController.gitHubLogin);
 
 router.get('/current', passport.authenticate('jwt', {session: false}), (req, res) => {
     res.send(req.user);

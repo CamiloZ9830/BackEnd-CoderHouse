@@ -10,6 +10,7 @@ const callCart = new CartsManager(filePath);
 const filePathP = path.resolve(__dirname, '../dao/fsDao/products-file.json');
 const callProducts = new ProductManager(filePathP);*/
 
+router.post('/api/carts/:cid/purchase', cartController.purchaseOrder);
 
 router.post('/api/carts/', cartController.addCart);
 

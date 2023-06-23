@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const PRIVATE_KEY = "JWTPrivateKey";
+const { jwtKey } = require('../config/dotenvVariables.config');
 
 function hashPassword(password) {
   const saltRounds = 10;
@@ -26,7 +25,7 @@ const getAge = (dateString) => {
 };
 
 const generateToken = (user) => {
-  const token = jwt.sign({user}, PRIVATE_KEY, {expiresIn: '5m'});
+  const token = jwt.sign({user}, jwtKey, {expiresIn: '30m'});
   return token;
 };
 
@@ -38,7 +37,7 @@ const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
     if (error) return res.status(403).send({error: "Not authorized"});
-    console.log("what is this", credentials);
+    console.log("credentials", credentials);
     req.user = credentials.user;
     next();
   });

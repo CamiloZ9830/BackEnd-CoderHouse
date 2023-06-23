@@ -1,10 +1,13 @@
+const UserDto = require("../dto/user.dto");
 const CartService = require("../services/cart.service");
+
 
 
 class CartController {
         constructor() {
              this.cartService = new CartService
         }
+
 
         addCart = async (req, res) => {
             try{
@@ -16,6 +19,21 @@ class CartController {
             }
         };
 
+        purchaseOrder = async (req, res) => {
+            const { cid } = req.params;
+            try{
+                    const userDto = new UserDto(req.user);
+                    const userData = await userDto.userPurchaseData();
+                    const ticketOrder = await this.cartService.cartPurchase(cid, userData);
+                    if (!ticketOrder) return  res.status(500).send({status: 'error', message: 'Order not recieved'});
+                    
+                   return res.status(201).render('purchase', {payload: ticketOrder});
+                    
+            } catch (e) {
+                res.status(500).json({message: e.message});
+            }
+        };
+
         getCartByIdPopulate = async (req, res) => {
             try{
                 const {cid} = req.params;
@@ -23,8 +41,8 @@ class CartController {
                 let total = 0;
                 if (getCartPopulate) {
                     total = getCartPopulate.products.reduce((total, quantity ) => total + quantity.quantity, 0) || 0
-                    let user = req.user;
-                    return res.render('home', { getDbCart: getCartPopulate, userSession: user, total: total}); /*res.status(200).send({status: 'success', payload: getCartPopulate});*/
+                    let user = structuredClone(req.user);
+                    return res.render('home', { getDbCart: getCartPopulate, userSession: user, total: total }); /*res.status(200).send({status: 'success', payload: getCartPopulate});*/
                 } else {
 
                     return res.status(404).send({status: 'error', message: 'Resource Not Found'});

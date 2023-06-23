@@ -25,28 +25,22 @@ socket.on('disconnect', () => {
 
 /*chat websocket*/
 let user;
-const emailRegex = /\S+@\S+\.\S+/;
 let chatBox = document.getElementById('input-chat');
 
-Swal.fire({
-  title: "Identificate",
-  input: "text",
-  text: "Ingresa tu correo para empezar a chatear",
-  inputValidator: (value) => {
-         if (!value) return 'Necesitas escribir un correo para continuar';
-         else if (!emailRegex.test(value)) return 'Patron de email no valido'
-  },
-  allowOutsideClick: false
- 
-}).then(result => {
-    user = result.value
-});
+/*traer user, email y username*/
+socket.on('user', data => {
+    user = {
+        email: data.email,
+        userName: data.userName
+    }
+    return user;
+})
 
 chatBox.addEventListener('keyup', evt => {
   if(evt.key === "Enter") {
     if(chatBox.value.trim().length > 0) {
          socket.emit('newChatMessage', {
-                                      user: user,
+                                      user: user.email ? user.email : user.userName,
                                       message: chatBox.value
                                      })
       chatBox.value = "";

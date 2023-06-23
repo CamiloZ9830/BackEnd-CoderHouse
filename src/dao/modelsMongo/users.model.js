@@ -5,13 +5,11 @@ const usersCollection = 'users';
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true,
         inmutable: true,
         default: ''
     },
     lastName: {
         type: String,
-        required: true,
         inmutable: true,
         default: ''
         },
@@ -33,8 +31,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
-        default: ''
+        default: null
     },
     role: {
         type: String,

@@ -1,8 +1,12 @@
 const { Server } = require('socket.io');
 const mongoDbChatsManager = require('./dao/mongoDao/mongoChatDao');
+const jwt = require('jsonwebtoken');
+const { jwtKey } = require('./config/dotenvVariables.config')
+
 
 
 const mongoChatManager = new mongoDbChatsManager();
+
 
 /*Configuracion y logica del servidor websocket
 La funcion createWebSocketServer se exporta a app.js y toma como parametro la configuracion del servidor http*/ 
@@ -25,6 +29,28 @@ const createWebSocketServer = (httpServer) => {
         webSocketServer.emit('newProduct', data )
       })
 
+      /*send user email*/
+     const cookie = socket.handshake.headers.cookie;
+     const token = extractTokenFromCookie(cookie);
+
+     if (!token) {
+      console.error('JWT token not found in the cookie.');
+      return;
+    }
+   
+  
+
+    try {
+      const decoded = jwt.verify(token, jwtKey);
+      const userData = decoded.user;
+      socket.emit('user', userData);
+    } catch (err) {
+      console.error('Invalid JWT token:', err.message);
+    }
+  
+
+  
+
       /*chat*/
       socket.on('newChatMessage', data => {
         messages.push(data);
@@ -43,6 +69,18 @@ const createWebSocketServer = (httpServer) => {
 });
 
   return webSocketServer
+}
+function extractTokenFromCookie(cookieHeader) {
+  if (!cookieHeader) {
+    return null;
+  }
+
+  const tokenRegex = /jwtCookieToken=([^;]+)/;
+  const match = cookieHeader.match(tokenRegex);
+  if (match) {
+    return match[1];
+  }
+  return null;
 }
 
 module.exports = createWebSocketServer;

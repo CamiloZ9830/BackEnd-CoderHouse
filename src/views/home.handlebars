@@ -7,6 +7,9 @@
       <a href="/products">
             Home
       </a>
+      <a href="/realTimeChat">
+            Chat
+      </a>
   </div>
 
 {{#if userSession}}
@@ -42,6 +45,12 @@
                     </div>             
               </div>
            {{/each}}
+           {{#if getDbCart.products}}                              
+                      <form action="/carts/{{userSession.cartId}}/purchase" method="POST">
+  <input type="hidden" name="cartId" value="{{userSession.cartId}}">
+  <button class="button-33" type="submit">Proceder con la compra</button>
+</form>
+{{/if}}  
         {{else}}
       {{#each paginatedDocs}}
        <div class="item">                         

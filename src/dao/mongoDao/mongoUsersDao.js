@@ -1,19 +1,16 @@
 
 const userModel = require('../modelsMongo/users.model');
-const mongoCartsDao = require('../mongoDao/mongoCartsDao');
 
 
 class MongoUsersDao {
     constructor() {
-        this.user = userModel
-        this.cart = new mongoCartsDao()
+        this.model = userModel
     }
 
     
      fieldValidator = async (field) => {
          try{
-             console.log(field);
-             const fieldExists = await userModel.findOne(field).select(["userName", "email"]);
+             const fieldExists = await this.model.findOne(field).select(["userName", "email"]);
              return fieldExists;
         }
           catch (e) {
@@ -23,14 +20,14 @@ class MongoUsersDao {
 
      updateUserAttribute = async (userId, newAttrValue) => {
             try {
-                const update = await userModel.updateOne(
+                const update = await this.model.updateOne(
                     {_id: userId},
                     {$set: {"cartId": newAttrValue } }
                 );
 
                 if(update.modifiedCount === 1) {
                     console.log("User attribute updated succesfully");
-                    const user = userModel.findById(userId);
+                    const user = this.model.findById(userId);
                     return user;
                 }
                 else {
@@ -46,34 +43,17 @@ class MongoUsersDao {
      
      registerUser = async (userRegistrationData) => {
         try{
-            let saveUser = await userModel.create(userRegistrationData);
-            if(saveUser) {
-                try{
-                    const createCart = await this.cart.addCart();
-                     if(!createCart) return console.log("error creating cart");
-                      saveUser["cartId"] = createCart;
-                      const saveUserWithCartId = await this.updateUserAttribute(saveUser._id, createCart._id);
-                         if(!saveUserWithCartId) return console.log("could not assign a cartId to the new user");
-                         return saveUserWithCartId;                  
-                }
-                catch(e) {
-                    console.error(e.message);
-                }
-
-            }
-
-            else {
-                console.log({status: "error", message: "Error saving user"});
-            }
+            const saveUser = await this.model.create(userRegistrationData);
+            return saveUser;   
         }
         catch (e) {
             console.error(e.message);
         }
      };
 
-     userLogIn = async (email) => {
+     getUser = async (email) => {
            try{
-            const getUser = await userModel.findOne({"email" : email});          
+            const getUser = await this.model.findOne({"email" : email});          
             return getUser;
            }
            catch(e) {

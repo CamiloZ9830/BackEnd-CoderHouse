@@ -1,0 +1,16 @@
+
+<div>
+    {{#if payload}}
+    <h1>Succes! Order placed.</h1>
+         <div class="item">
+                    <div class="descripcion-Item">
+                       <p><b>Ticket No: </b>{{payload.code}}</p>
+                       <p><b>Email: </b>{{payload.buyerEmail}}</p>
+                       <p><b>Total amount: $</b>{{payload.amount}}</p>
+                       <p><b>User Id: </b>{{payload.orderBy}}</p>                   
+                    </div>             
+              </div>
+    {{/if}}
+</div>
+
+ <a href="/products">Home</a>
