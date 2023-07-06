@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js"
+    "dev": "set NODE_ENV=development&& nodemon src/app.js",
+    "prod": "set NODE_ENV=production&& node src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,7 @@
     "twilio": "^4.13.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "nodemon": "^2.0.22"
   }
 }

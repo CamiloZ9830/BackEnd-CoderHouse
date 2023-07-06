@@ -1,5 +1,6 @@
 const MongoProductDao = require('../dao/mongoDao/mongoProductDao');
 const ProductsRepository = require('../repositories/products.repository');
+const { faker } = require('@faker-js/faker');
 
 
 class ProductService {
@@ -39,6 +40,19 @@ class ProductService {
           } catch (e) {
             console.error(e.message);
           }
+    };
+
+    /* product mock creado con faker usado en la ruta product.controller*/
+    async createRandomProduct () {
+            return {
+                 title: faker.vehicle.model(),
+                 description: faker.commerce.productDescription(),
+                 price: faker.number.int({min: 100, max: 10000}),
+                 thumbnail: faker.image.url(),
+                 stock: faker.number.int({max: 99}),
+                 code: faker.string.uuid(),
+                 category: faker.commerce.department()
+            }
     };
 
     async findProductById (id) {

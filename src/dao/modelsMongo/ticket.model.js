@@ -7,7 +7,7 @@ const ticketSchema = new mongoose.Schema({
          type: String,
          inmutable: true,
          unique: true,
-         require: true
+         required: true
       },
       buyerEmail: {
          type: String,

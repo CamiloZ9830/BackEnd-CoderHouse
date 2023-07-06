@@ -28,7 +28,8 @@ const productsSchema = new mongoose.Schema({
      stock: {
       type: Number,
       min: 0,
-      max: 100
+      max: 100,
+      default: 0
      },
      category: String,
      createdAt: {

@@ -1,12 +1,12 @@
 
 class ProductsRepository {
-    constructor(dao) {
-        this.dao = dao
+    constructor(productDao) {
+        this.productDao= productDao;
     }
 
     getProducts = async (limit, page, category, sort) => {       
           try {
-            const getProd = await this.dao.getProducts(limit, page, category, sort); 
+            const getProd = await this.productDao.getProducts(limit, page, category, sort); 
             return getProd;
 
           } catch (e) {
@@ -16,7 +16,7 @@ class ProductsRepository {
 
     addProduct = async (product) => {      
         try{
-          const addProd = await this.dao.addProduct(product);
+          const addProd = await this.productDao.addProduct(product);
           return addProd;  
         }
         catch (e) {
@@ -26,7 +26,7 @@ class ProductsRepository {
 
      findProductById = async (product) => {      
       try{
-        const findProd = await this.dao.findProductById(product);
+        const findProd = await this.productDao.findProductById(product);
         return findProd;  
       }
       catch (e) {
@@ -36,7 +36,7 @@ class ProductsRepository {
 
    substractStock = async (prodId, quantity) => {
     try{
-      const updateStock = await this.dao.substractStock(prodId, quantity);
+      const updateStock = await this.productDao.substractStock(prodId, quantity);
       return updateStock;  
     }
     catch (e) {
@@ -47,7 +47,7 @@ class ProductsRepository {
 
     updateProductById = async (id, product) => {      
         try{
-          const findProd = await this.dao.updateProductById(id, product);
+          const findProd = await this.productDao.updateProductById(id, product);
           return findProd;  
         }
         catch (e) {
@@ -58,7 +58,7 @@ class ProductsRepository {
 
     deleteProduct = async (id) => {
       try{
-          const deleteProd = await this.dao.deleteProduct(id);
+          const deleteProd = await this.productDao.deleteProduct(id);
           return deleteProd;        
       } catch(e) {
         console.error(e.message);

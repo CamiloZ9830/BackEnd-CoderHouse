@@ -16,12 +16,17 @@ const productsController = new ProductsController();
      /*getDbProducts ? res.status(200).send({status: 'success', payload: getDbProducts})
      : res.status(400).send({status: 'error', payload: getDbProducts});*/
   });
+
+  /*ruta de mocking products*/
+  router.get('/mockingproducts', productsController.mockingProducts);
   
   
   router.get('/api/products/:pid', productsController.findProductById);
   
   
-   router.post('/api/products/',passportCall('jwt'), handlePermissions(["ADMIN"]), objectValidation, productsController.addProduct, async (req, res) => {
+   router.post('/api/products/', 
+                  productsController.addProduct, 
+                  async (req, res) => {
             //io.sockets.emit('newProduct', [prod2, allProducts]);         
       });
       

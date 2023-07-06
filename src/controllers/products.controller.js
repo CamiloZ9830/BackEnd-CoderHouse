@@ -1,5 +1,8 @@
+const CustomError = require('../services/CustomErrors/CustomError');
 const CartService = require('../services/cart.service');
+const { EError } = require('../services/customErrors/error.enums');
 const ProductService = require('../services/products.service');
+const { generateProductErrorInfo } = require('../services/customErrors/error.info')
 const { getAge } = require('../utils/session.utils');
 
 
@@ -48,11 +51,35 @@ class ProductsController {
             }
         };
 
-        addProduct = async (req, res) => {
+        addProduct = async (req, res, next) => {
             try {
                     const product = req.body;
+                    const { title, code, category, price } = product;
+                    /* manejador de errores customizados que valida las propiedades, titulo, codigo, categoria y precio de un producto*/
+                    if(!title || !code || !category || !price){
+                        CustomError.createError({
+                            name: "Product creation error",
+                            cause: generateProductErrorInfo(product),
+                            message: "Error trying to create a new product",
+                            code: EError.INVALID_TYPES_ERROR,
+                        })
+                    };
                     const newProduct = await this.productService.addProduct(product);             
                     res.status(201).send({ status: 'success', payload: newProduct});
+            } catch(e) {
+                next(e);
+            }
+        };
+
+        /* controlador que crea productos con faker-js*/
+        mockingProducts = async (req, res) => {
+            try{
+                const productsMock = [];
+                for (let i = 0; i <= 50; i++) {
+                    const product = await this.productService.createRandomProduct();
+                    productsMock.push(product);
+                }
+                return res.status(200).send({status: 'success', payload: productsMock});
             } catch(e) {
                 res.status(500).json({message: `Error: ${e.message}`});
             }

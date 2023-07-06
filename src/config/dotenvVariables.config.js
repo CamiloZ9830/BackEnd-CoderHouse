@@ -1,4 +1,10 @@
-require("dotenv").config({path:'./src/.env'})
+
+if (process.env.NODE_ENV === 'development'){
+    require("dotenv").config({path:'./src/.env.development'});
+}
+if (process.env.NODE_ENV === 'production'){
+    require("dotenv").config({path:'./src/.env.production'});
+}
 
 /*variables de entorno */
 module.exports = {

@@ -1,5 +1,9 @@
 #.env file
-src/.env
+src/.env.development
+src/.env.production
 
 #node-modules
 node_modules/
+
+
+

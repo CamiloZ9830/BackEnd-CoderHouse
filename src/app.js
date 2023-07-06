@@ -10,6 +10,7 @@ const initializePassport = require('./config/passport.config');
 const passport = require('passport');
 const MongoSingleton = require('./database/MongoDb');
 const { port } = require('./config/dotenvVariables.config');
+const { errorHandler } = require('./middlewares/router.middlewares/error.middlewares');
 
 
 const httpServer = app.listen(port, () => {
@@ -50,6 +51,9 @@ app.use('/', productsRouter);
 app.use('/', cartsRouter);
 app.use('/', viewsRouter);
 app.use('/', usersRouter);
+
+/* error handler */
+app.use(errorHandler);
 
 
 
