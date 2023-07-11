@@ -27,7 +27,6 @@ class ProductsController {
                 
                 let user = structuredClone(req.user);
                 user["age"] = getAge(user.dateOfBirth);
-                console.log("this user:", user);
         
         
                 const getDbProducts = await this.productService.getProducts(Number(limit), page, category, sort);
@@ -105,6 +104,10 @@ class ProductsController {
             const product = req.body;             
                  const updatedProduct = await this.productService.updateProductById(pid, product);
               if (!updatedProduct) return res.status(404).send({status: 'error', message: "Product could not be updated"});
+              req.logger.info(`
+              Request: ${req.method} in ${req.url}
+              ${req.user?.userName ?? 'User information not available'}
+              ${ new Date().toLocaleTimeString()}`);
               return res.status(201).send({status: 'success', payload: updatedProduct});
             
           } catch (e) {

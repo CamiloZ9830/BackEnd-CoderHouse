@@ -11,7 +11,11 @@ const passport = require('passport');
 const MongoSingleton = require('./database/MongoDb');
 const { port } = require('./config/dotenvVariables.config');
 const { errorHandler } = require('./middlewares/router.middlewares/error.middlewares');
+const { winstonLogger, errorHandlerLogger } = require('./utils/logger/logger.utils')
 
+/*winston logger*/
+app.use(winstonLogger);
+app.use(errorHandlerLogger);
 
 const httpServer = app.listen(port, () => {
 console.log(`Server is listening on port ${port}...`);

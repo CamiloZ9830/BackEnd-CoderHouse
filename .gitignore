@@ -6,4 +6,10 @@ src/.env.production
 node_modules/
 
 
+#logger
+logsErrors.log
+logsFatal.log
+logsInternalErrors.log
+
+
 

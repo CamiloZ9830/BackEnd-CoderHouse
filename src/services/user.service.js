@@ -1,7 +1,8 @@
 const MongoUsersDao = require('../dao/mongoDao/mongoUsersDao');
 const UserRepository = require('../repositories/user.respository');
-const { hashPassword, comparePasswords } = require('../utils/session.utils');
+const { hashPassword, comparePasswords, randomDate } = require('../utils/session.utils');
 const MongoCartsDao = require('../dao/mongoDao/mongoCartsDao');
+const { faker } = require('@faker-js/faker');
 
 
 class UserService {
@@ -70,6 +71,23 @@ class UserService {
           return update;
         } catch (e) {
           console.error(e.message);
+        }
+      };
+
+      /*fake user generator /@faker-js */
+      async fakeUser() {
+        const userRoleEnum = {
+           user: "user",
+           premium: "premium"
+        }
+        return {
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            userName: faker.internet.userName(),
+            email: faker.internet.email(),
+            dateOfBirth: randomDate(new Date(1950, 0, 1), new Date(2010, 0, 1)),
+            password: faker.internet.password({length: 16}),
+            role: faker.helpers.enumValue(userRoleEnum),
         }
       };
 

@@ -64,7 +64,7 @@ class CartService {
                       amount: amount,
         };
 
-        console.log("purchaseOrder: ", purchaseOrder);
+        //console.log("purchaseOrder: ", purchaseOrder);
         
         await this.repository.saveTicketPurchase(purchaseOrder);
 

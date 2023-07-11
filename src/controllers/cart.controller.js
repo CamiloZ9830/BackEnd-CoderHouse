@@ -15,6 +15,15 @@ class CartController {
                 if (saveCart) return res.status(201).send({status: 'success', payload: saveCart});
 
             } catch(e) {
+                const user = req.user ? `User: ${req.user._id}` : 'User information not available';
+                const requestInfo = `Request: ${req.method} in ${req.url}`;
+                const warningMessage = 'A potential issue or warning was detected.';
+                req.logger.warning(`
+                ${warningMessage}
+                ${requestInfo}
+                ${user}
+                Timestamp: ${new Date().toLocaleTimeString()}
+                `);
                 res.status(500).json({message: e.message});
             }
         };
@@ -30,6 +39,12 @@ class CartController {
                    return res.status(201).render('purchase', {payload: ticketOrder});
                     
             } catch (e) {
+                const user = req.user ? `User: ${req.user._id}` : 'User information not available';
+                const requestInfo = `Request: ${req.method} in ${req.url}`;
+                req.logger.fatal(` Unexpected error:
+                ${user}
+                ${requestInfo}
+                ${ new Date().toLocaleTimeString()}`);
                 res.status(500).json({message: e.message});
             }
         };
@@ -145,8 +160,6 @@ class CartController {
                 res.status(500).json({message: e.message});
             }
         };
-
-
 };
 
 

@@ -24,6 +24,18 @@ const getAge = (dateString) => {
     return age;
 };
 
+function randomDate(start, end) {
+  var d = new Date(start.getTime() + Math.random() * (end.getTime() -                     start.getTime())),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
 const generateToken = (user) => {
   const token = jwt.sign({user}, jwtKey, {expiresIn: '30m'});
   return token;
@@ -46,4 +58,4 @@ const authenticateToken = (req, res, next) => {
 
 
 module.exports = { hashPassword, comparePasswords, getAge,
-                   generateToken, authenticateToken };
+                   generateToken, authenticateToken, randomDate };

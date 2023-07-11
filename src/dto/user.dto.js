@@ -32,6 +32,7 @@ class UserDto {
              normalizedData.email = this.email;
              normalizedData.dateOfBirth = this.dateOfBirth;
              normalizedData.password = this.password;
+             normalizedData.role = this.role;
 
              return normalizedData;
         };

@@ -8,8 +8,13 @@ const passport = require('passport');
 const userController = new UserController();
 
 /*registra a un usuario usando la estrategia passport-jwt y le asigna un carrito recien creado */
-router.post('/registration', userNameValidator, emailValidator, userController.registerUser);
+router.post('/registration', userController.registerUser);
 
+/*artillery user test*/
+router.get('/userFlowTest', userController.generateFakeUser);
+
+/*loggerTest*/
+router.get('/loggerTest', userController.loggerTest);
 
 /*login de usuarios con la estrategia passport-jwt*/
 router.post('/login', userController.userLogin);
