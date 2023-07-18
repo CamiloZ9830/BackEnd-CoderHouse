@@ -7,6 +7,10 @@
       <a href="/products">
             Home
       </a>
+      <a href="/products/create-product">
+            Crear un producto
+      </a>
+      
       <a href="/realTimeChat">
             Chat
       </a>
@@ -14,11 +18,11 @@
 
 {{#if userSession}}
     <h1>Bienvenido {{userSession.role}}!  {{userSession.userName}}</h1> 
-    <a href="/logout">Cerrar sesión</a>
-{{else}}
-    <h1>Te damos la Bienvenida!!</h1>
-    <a href='/register'>Registrarse</a></br></br>
-    <a href='/login'>Iniciar Sesion</a>
+    <form action="/change/role" method="POST">
+    <input type="hidden" name="_method" value="POST">
+    <button type="submit">Cambiar rol, tu rol es {{userSession.role}}</button>
+    </form>
+    <a href="/logout">Cerrar sesión</a>     
 {{/if}}
   </div>
 
@@ -42,7 +46,13 @@
                       <div class="precio-cantidad">
                           <h3>$ {{this.product.price}}</h3>                          
                       </div>                     
-                    </div>             
+                    </div> 
+                     {{#if ../userSession}}
+                    <form action="/carts/{{../userSession.cartId}}/remove-product/{{this.product._id}}" method="POST">
+  <input type="hidden" name="productId" value="{{this._doc._id}}">
+  <button class="button-delete" type="submit">Remover del carrito</button>
+</form>   
+{{/if}}         
               </div>
            {{/each}}
            {{#if getDbCart.products}}                              
@@ -69,6 +79,11 @@
                       <form action="/carts/{{../userSession.cartId}}/product/{{this._doc._id}}" method="POST">
   <input type="hidden" name="productId" value="{{this._doc._id}}">
   <button class="button-33" type="submit">Agregar al carrito</button>
+</form>
+
+<form action="/api/product/{{this._doc._id}}" method="POST">
+  <input type="hidden" name="productId" value="{{this._doc._id}}">
+  <button class="button-delete" type="submit">Eliminar Producto</button>
 </form>
 {{/if}}   
               </div>

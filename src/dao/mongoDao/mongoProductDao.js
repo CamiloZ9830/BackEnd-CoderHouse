@@ -10,7 +10,9 @@ class MongoProductsDao {
           /* organiza los productos de la base de datos paginados usando "mongoose Paginate V2" con filtros como categoria, sort, y limit */
          getProducts = async (limit, page, category, sort) => {
                try {       
+                  
                   const getProd = await this.model.paginate( category, {limit: limit, sort: sort, page: page});
+                  
                   return getProd                          
                }
             

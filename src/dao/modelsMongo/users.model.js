@@ -16,12 +16,14 @@ const userSchema = new mongoose.Schema({
     userName: {
         type: String,
         required: true,
-        lowercase: true
+        lowercase: true,
+        unique: true
     },
     email: {
         type: String,
         lowercase: true,
         inmutable: true,
+        unique: true,
         default: ''
     },
     dateOfBirth: {
@@ -35,6 +37,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
+        enum: ['user', 'premium', 'admin'],
         default: "user"
     },
     cartId: {

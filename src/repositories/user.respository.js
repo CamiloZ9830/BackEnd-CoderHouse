@@ -34,9 +34,9 @@ class UserRepository {
             }
         };
 
-        updateUserAttribute = async (userId, newAttrValue) => {
+        updateUserAttribute = async (userId, attr, newAttrValue) => {
             try {
-                const update = await this.userDao.updateUserAttribute(userId, newAttrValue);
+                const update = await this.userDao.updateUserAttribute(userId, attr, newAttrValue);
                 return update;
             } catch(e) {
                 console.error(e.message);

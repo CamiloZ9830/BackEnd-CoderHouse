@@ -10,7 +10,7 @@ class MongoUsersDao {
     
      fieldValidator = async (field) => {
          try{
-             const fieldExists = await this.model.findOne(field).select(["userName", "email"]);
+             const fieldExists = await this.model.findOne(field).select(["userName", "email", "password"]);
              return fieldExists;
         }
           catch (e) {
@@ -18,11 +18,11 @@ class MongoUsersDao {
           }  
      };
 
-     updateUserAttribute = async (userId, newAttrValue) => {
+     updateUserAttribute = async (userId, attr, newAttrValue) => {
             try {
                 const update = await this.model.updateOne(
                     {_id: userId},
-                    {$set: {"cartId": newAttrValue } }
+                    {$set: { [attr]: newAttrValue } }
                 );
 
                 if(update.modifiedCount === 1) {

@@ -1,7 +1,9 @@
+const MongoProductsDao = require('../../dao/mongoDao/mongoProductDao');
 const MongoUsersDao = require('../../dao/mongoDao/mongoUsersDao');
 
 
 const mongoUsersManager = new MongoUsersDao();
+const mongoProductManager = new MongoProductsDao();
 
 
 const userNameValidator = async (req, res, next) => {
@@ -76,10 +78,53 @@ const objectValidation = (req, res, next) => {
     }
   };
 
+  const ownerValidate = async (req, res, next) => {
+    const { email } = req.user;
+    const { pid } = req.params;
+      try{
+        const getProd = await mongoProductManager.findProductById(pid);
+        if(getProd?.owner === email){
+          res.status(409).send("Cannot buy your own products");
+          return;
+        }else {
+          next();
+          return;
+        }
+      }catch(e) {
+        throw new Error(e.message);
+      }
+  };
+
+   const ownerDeleteProduct = async (req, res, next) => {
+      const { email, role } = req.user;
+      const  { pid } = req.params;
+      try{
+        const getProd = await mongoProductManager.findProductById(pid);
+        if(role === 'admin') {
+          next();
+          return;
+        } else if (getProd?.owner === email){
+           next();
+           return;
+        }
+        else{
+          res.status(409).send("Can only delete your own products");
+          return;
+        }
+      }catch(e){
+         throw new Error(e.message);
+      }
+   };
+
+
+  
+
 
 module.exports = {
     emailValidator,
     userNameValidator,
     objectValidation,
-    objectValidationUpdate
+    objectValidationUpdate,
+    ownerValidate,
+    ownerDeleteProduct,
 }

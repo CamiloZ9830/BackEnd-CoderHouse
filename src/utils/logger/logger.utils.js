@@ -2,7 +2,7 @@ const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, printf, metadata } = format;
 const { errorLogger } = require('express-winston');
 const customLevelOptions = require('./loggerLevelsEnums');
-const { mongoUrl } = require('../../config/dotenvVariables.config');
+const { mongoUrl, env } = require('../../config/dotenvVariables.config');
 require('winston-mongodb');
 
 const myErrorFormat = printf(({ level, meta, timestamp}) => {
@@ -67,14 +67,13 @@ const errorHandlerLogger = errorLogger({
 
 const winstonLogger = (req, res, next) => {
 
-    if (process.env.NODE_ENV === 'development'){
+    if (env === 'development'){
         req.logger = developmentLogger;
-        next();
     }
-    if ( process.env.NODE_ENV === 'production') {
+    if ( env === 'production') {
         req.logger = productionLogger
-        next();
     }
+    next();
 };
 
 

@@ -120,6 +120,15 @@ class CartService {
           }
     };
 
+    async deleteFromCart (cartId, prodId) {
+      try {
+        const deleteProd = await this.repository.deleteFromCart(cartId, prodId);
+        return deleteProd;
+      } catch (e) {
+        console.error(e.message);
+      }
+    }
+
     async deleteAllProducts (cartId) {
         try {
             const deleteAll = await this.repository.deleteAllProducts(cartId);

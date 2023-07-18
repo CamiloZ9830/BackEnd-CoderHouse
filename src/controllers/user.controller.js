@@ -1,12 +1,16 @@
 const UserService = require('../services/user.service');
 const UserDto = require('../dto/user.dto');
-const { generateToken } = require('../utils/session.utils');
-const { adminEmail, adminPassword, jwtCookieToken } = require('../config/dotenvVariables.config');
-const { sendEmail } = require('../utils/mail.utils');
+const { generateToken, passwordUpdateToken, hashPassword, authenticateToken, comparePasswords } = require('../utils/session.utils');
+const { adminEmail, adminPassword, jwtCookieToken, jwtKey, port } = require('../config/dotenvVariables.config');
+const { sendEmail, sendRecoveryPassword } = require('../utils/mail.utils');
+
+
 
 class UserController {
      constructor () {
          this.userService = new UserService();
+         this.secret = null;
+         this.user = null;
      }
 
      registerUser = async (req, res) => {
@@ -17,6 +21,7 @@ class UserController {
             const saveUser = await this.userService.registerUser(dtoData);
             if(saveUser) {
                     sendEmail(dtoData.email); 
+                    req.logger.info(`new user registered succesfully`)
                     res.status(201)
                    .send({status: "success", message: "User registered, email sent"});              
             }
@@ -41,8 +46,7 @@ class UserController {
             return saveUser;
         }
         catch(e) {
-            req.logger.error(e.message);
-            throw new Error(e.message);
+            req.logger.error("something went wrong");
         }   
      };
 
@@ -77,6 +81,7 @@ class UserController {
                 httpOnly: true
             }).status(200).redirect(`/products`);
 
+
         } catch (e) {
             req.logger.error(e.message);
             if (e.message === "Invalid email") return res.status(401).send({ status: "error", error: "Invalid email" });
@@ -98,12 +103,86 @@ class UserController {
      userLogout = async (req, res) => { 
         try {
             res.clearCookie(jwtCookieToken);
-            res.status(200).redirect('/login'); 
+            res.status(200).redirect('/login');
         } catch(e) {
             req.logger.error(e.message);
             res.status(400).send({status: "error", message: e.message});
         }
      };
+
+     /*
+     envia el link con el id del user y un token curado/firmado,
+     ? se valida si el correo pertence a un suario registrado
+     ? si el token expira pierde validez y se genera un link que dirije a una nueva direccion donde se puede solicitar un nuevo link para cambiar la contraseña 
+     */
+     sendPasswordRecovery = async (req, res) => {
+        const email = req.query.emailPasswordReset;
+        const validateEmail = { email: email};
+        try{
+            this.user = await this.userService.fieldValidator(validateEmail);
+            if(!this.user) return res.status(400).send({status: "error", message: "introduce a valid user"});
+            this.secret = jwtKey + this.user.password;
+            const access_token = passwordUpdateToken(this.user, this.secret);
+            const url = `http://localhost:${port}/change/password/${this.user._id}/${access_token}`;
+            req.logger.debug(this.user);
+            const sendMail = sendRecoveryPassword(email, url);
+            if(!access_token) return res.redirect('/login');
+            res.status(201).send({status: "success", message: `${this.user.userName}, your password reset link was sent to your email address`});
+            return sendMail;
+        }catch(e){
+            req.logger.error(e.message);
+            res.status(400).send( { status: "error", message: e.message } );
+        }
+     };
+
+     /*
+     ? para la nueva contraseña se valida el token (si no ha expirado o se autentica correctamente)
+     ? valida que la nueva contraseña que los campos sean iguales y no se actualize con la contraseña anterior 
+     */ 
+     passwordReset = async (req, res) => {
+        const  { passwordReset1, passwordReset2 } = req.body;
+        const { userId, token } = req.params;
+        const expiredTokenLink = `http://localhost:${port}/password-reset`;
+        try{
+            const validToken = await authenticateToken(token, this.secret);
+            if(!validToken) return res.status(400).send(`<p> Token expired or corrupted, please renew your token by clicking this <a href="${expiredTokenLink}">link</a></p>`);
+            if(passwordReset1 !== passwordReset2) return res.status(400).send({status: "error", message: "The fields must match"});
+            const isSamePassword = comparePasswords(passwordReset2, this.user.password);
+            if(isSamePassword) return res.status(400).send({ status: "error", message: "New password must be different from the old password" });
+            const newPassword = hashPassword(passwordReset2);
+            const updatedPassword = await this.userService.updateUserAttribute(userId, "password", newPassword);
+            if(!updatedPassword) return res.status(400).send({status: "error", message: "Could not change password, try again!"});
+            res.status(200).send({status: "success", message: "Your password was succesfully updated"});
+            return updatedPassword;
+        }catch(e){
+            req.logger.error(e.message);
+            res.status(400).send( { status: "error", message: e.message } );
+        }
+     };
+
+     /*
+     cambia el rol de usuario de 'user' a 'premium' y viceversa
+     !al cambiar el rol el el req.user no se actualiza, asi que se genera un nuevo token y el req.user se actualiza con el nuevo rol y la session se mantiene
+      */
+     changeRole = async (req, res) => {
+        const { _id, role } = req.user;
+        try{
+            const changeRole = await this.userService.switchUserRole(_id, role);
+            if(!changeRole) return res.status(400).send({status: "error", message: "There was an error. Try again!"});
+            req.user["role"] = changeRole._doc.role;
+
+            const access_token = generateToken(req.user);
+            
+        res.cookie(jwtCookieToken, access_token, {
+            maxAge: 30 * 60 * 1000,
+            httpOnly: true
+        }).status(200).send({ status: "success", message: "Your user role was successfully updated" });
+            return changeRole;
+        }catch(e){
+            res.status(400).send( { status: "error", message: e.message } );
+        }
+     };
+
 
      generateFakeUser = async (req, res) => {
         try{          
@@ -190,8 +269,6 @@ class UserController {
                 throw new Error(e.message);
             }
      };
-
-
 };
 
 

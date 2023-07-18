@@ -122,6 +122,15 @@ class CartRepository {
               }
         };
 
+        deleteFromCart = async (cartId, prodId) => {
+          try {
+            const deleteIdFromCart = await this.cartDao.deleteProductIdFromCart(cartId, prodId);
+            return deleteIdFromCart;
+          } catch (e) {
+            throw new Error(e.message)
+          }
+        };
+
         deleteProductId = async (cartId, prodId) => {
             try {
                 const getCart = await this.cartDao.deleteProductId(cartId, prodId);

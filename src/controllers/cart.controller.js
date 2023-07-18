@@ -95,6 +95,18 @@ class CartController {
             }
         };
 
+        deleteFromCart = async (req, res) => {
+            try{
+                const { cid, pid } = req.params;
+                const deleteProductIdFromCart = await this.cartService.deleteFromCart(cid, pid);
+                if(!deleteProductIdFromCart) return res.status(200).redirect({status: 'error', message: "Error updating your cart, try again!"});
+                    res.status(200).redirect('back');
+                return deleteProductIdFromCart; 
+            }catch(e){
+                throw new Error(e.message);
+            }
+        };
+
         arrayOfProducts = async (req, res) => {
             try{
                 const { cid } = req.params;

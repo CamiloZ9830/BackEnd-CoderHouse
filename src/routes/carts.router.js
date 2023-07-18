@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const path = require('path');
 const CartController = require('../controllers/cart.controller');
+const { ownerValidate } = require('../middlewares/router.middlewares/router.middlewares');
 
 const cartController = new CartController();
 
@@ -18,7 +19,7 @@ router.get('/api/carts/:cid/', cartController.getCartByIdPopulate);
 
 router.put('/api/carts/:cid', cartController.arrayOfProducts);
 
-router.post('/api/carts/:cid/product/:pid/', cartController.addProductId);
+router.post('/api/carts/:cid/product/:pid/', ownerValidate, cartController.addProductId);
 
 router.put('/api/carts/:cid/product/:pid/', cartController.addQuantity);
 

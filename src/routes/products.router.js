@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const path = require('path');
 const ProductsController = require('../controllers/products.controller');
-const { objectValidation, objectValidationUpdate } = require('../middlewares/router.middlewares/router.middlewares');
+const { objectValidation, objectValidationUpdate, ownerDeleteProduct } = require('../middlewares/router.middlewares/router.middlewares');
 const { handlePermissions, passportCall } = require('../utils/authorization.utils');
 
 const productsController = new ProductsController();
@@ -24,7 +24,7 @@ const productsController = new ProductsController();
   router.get('/api/products/:pid', productsController.findProductById);
   
   
-   router.post('/api/products/', 
+   router.post('/api/products/', passportCall('jwt'),
                   productsController.addProduct, 
                   async (req, res) => {
             //io.sockets.emit('newProduct', [prod2, allProducts]);         
@@ -36,7 +36,8 @@ const productsController = new ProductsController();
    });
   
   
-   router.delete('/api/products/:pid/',passportCall('jwt'), handlePermissions(["ADMIN"]), productsController.deleteProductById, async (req, res) => {   
+   router.delete('/api/products/:pid/',passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]), ownerDeleteProduct, productsController.deleteProductById, async (req, res) => { 
+      console.log("success");  
              //io.sockets.emit('newProduct', {status: "success", massage: `product with pid ${pid} deleted`, payload: allProducts});     
    });
      return router

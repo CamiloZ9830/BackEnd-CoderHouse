@@ -1,8 +1,8 @@
-const CustomError = require('../services/CustomErrors/CustomError');
+const CustomError = require('../services/customizedErrors/CustomError');
 const CartService = require('../services/cart.service');
-const { EError } = require('../services/customErrors/error.enums');
+const { EError } = require('../services/customizedErrors/error.enums');
 const ProductService = require('../services/products.service');
-const { generateProductErrorInfo } = require('../services/customErrors/error.info')
+const { generateProductErrorInfo } = require('../services/customizedErrors/error.info')
 const { getAge } = require('../utils/session.utils');
 
 
@@ -53,9 +53,10 @@ class ProductsController {
         addProduct = async (req, res, next) => {
             try {
                     const product = req.body;
-                    const { title, code, category, price } = product;
+                    const { email } = req.user;
+                    const { title, category, price } = product;
                     /* manejador de errores customizados que valida las propiedades, titulo, codigo, categoria y precio de un producto*/
-                    if(!title || !code || !category || !price){
+                    if(!title || !category || !price){
                         CustomError.createError({
                             name: "Product creation error",
                             cause: generateProductErrorInfo(product),
@@ -63,7 +64,7 @@ class ProductsController {
                             code: EError.INVALID_TYPES_ERROR,
                         })
                     };
-                    const newProduct = await this.productService.addProduct(product);             
+                    const newProduct = await this.productService.addProduct(product, email);             
                     res.status(201).send({ status: 'success', payload: newProduct});
             } catch(e) {
                 next(e);

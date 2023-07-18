@@ -15,7 +15,10 @@ const productsSchema = new mongoose.Schema({
       type: Number,
       min: 0
      },
-     thumbnail: [String],
+     thumbnail: {
+       type: [String],
+       default: ["https://trek.scene7.com/is/image/TrekBicycleProducts/BontragerSolsticeMIPSCPSC_30466_A_Primary?$responsive-pjpg$&cache=on,on&wid=800&hei=600"]
+     },
      status: {
         type: Boolean,
         default: true
@@ -32,6 +35,10 @@ const productsSchema = new mongoose.Schema({
       default: 0
      },
      category: String,
+     owner: {
+      type: String,
+      default: 'admin'
+     },
      createdAt: {
         inmutable: true,
         type: Date,

@@ -1,0 +1,33 @@
+<form className='registration-form' action="/api/products/" method="POST" >
+          <label htmlFor='Nombre'>*Titulo</label>
+          <input type="text" placeholder="Nombre del producto" name='title' required>       
+          
+          <label htmlFor='Descripcion'>Descripcion</label>
+          <input type="text" placeholder="Descripcion" name='description'>      
+          
+          <label htmlFor='Precio'>*Precio</label>
+          <input type="number" min="1" step="any" placeholder="Precio" name='price' required>      
+
+          <label htmlFor="Stock">*Cantidad de productos</label>
+          <input type="number" min="1" max="100" step="1" placeholder="Stock" name="stock" required>
+
+          <label htmlFor="Thumbnail">Imagen/s</label>
+          <input type="file" placeholder="Subir Imagen" name="thumbnail">
+          
+           <label htmlFor="Category">*Categoria</label>
+            <select name="category" required>
+            <option value="" disabled selected>Selecciona una categoría</option>
+            <option value="Mountain Bikes">Mountain Bikes</option>
+            <option value="Road Bikes">Road Bikes</option>
+            <option value="Kids Bikes">Kids Bikes</option>
+            <option value="Women's Bikes">Women's Bikes</option>
+            <option value="Accesorios">Accesorios</option>
+            <option value="Electric Bikes">Electric Bikes</option>
+            </select>
+
+          <button type="submit" value="submit">Crear</button>
+
+
+          <a href="/products"><p>Ir a Pagina principal</p></a>
+           
+</form>

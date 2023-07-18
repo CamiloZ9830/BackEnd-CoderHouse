@@ -20,6 +20,21 @@ class UserService {
           }
     };
 
+    async switchUserRole (userId, userRole) {
+      try {
+        if (userRole === "user") {
+          const userRole = await this.updateUserAttribute(userId, "role", "premium"); 
+          userRole["password"] = null;
+          return userRole;
+        }else if(userRole === 'premium'){
+          const userRole = await this.updateUserAttribute(userId, "role", "user");
+          return userRole;
+        }
+    } catch (e) {
+        console.error(e.message);
+      }
+    };
+
     async registerUser(userRegistrationData) {
       const { password } = userRegistrationData; 
      if (password) {
@@ -29,8 +44,7 @@ class UserService {
           const register = await this.repository.registerUser(userRegistrationData);
           if(register) {
             try{ 
-              console.log("register: ", register);
-                  const saveUserWithCartId = await this.updateUserAttribute(register.user._id, register.cartId);
+                  const saveUserWithCartId = await this.updateUserAttribute(register.user._id, "cartId", register.cartId);
                      if(!saveUserWithCartId) return console.log("could not assign a cartId to the new user");
                      return saveUserWithCartId;                  
             }
@@ -61,13 +75,13 @@ class UserService {
           return getUser;
         } catch (e) {
           console.error(e.message);
-          throw e;
+          throw new Error(e.message);
         }
       };
 
-      async updateUserAttribute(userId, newAttrValue) {
+      async updateUserAttribute(userId, attr, newAttrValue) {
         try {
-          const update = await this.repository.updateUserAttribute(userId, newAttrValue);
+          const update = await this.repository.updateUserAttribute(userId, attr, newAttrValue);
           return update;
         } catch (e) {
           console.error(e.message);

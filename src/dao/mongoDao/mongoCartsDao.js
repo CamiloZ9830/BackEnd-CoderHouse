@@ -232,6 +232,20 @@ class MongoCartsDao {
       }
     };
 
+    deleteProductIdFromCart = async (cartId, prodId) => {
+      try{
+          const deleteProductId = await this.model.updateOne(
+            { _id: cartId },
+            { $pull: { products: { product: prodId }}}
+          );
+          if (deleteProductId.modifiedCount === 1) return `Product ID ${prodId} deleted succesfully`;
+            else return `product quantity has been updated`;
+            
+      }catch(e){
+         console.log(e.message);
+      }
+    };
+
     /*deleteAllProducts = async (cartId) => {
            try {
                 await this.connect();

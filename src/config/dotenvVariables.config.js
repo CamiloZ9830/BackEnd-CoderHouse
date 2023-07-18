@@ -1,10 +1,17 @@
+const { Command } = require('commander');
+const dotenv = require('dotenv');
 
-if (process.env.NODE_ENV === 'development'){
-    require("dotenv").config({path:'./src/.env.development'});
-}
-if (process.env.NODE_ENV === 'production'){
-    require("dotenv").config({path:'./src/.env.production'});
-}
+const program = new Command();
+
+program
+  .option('--env <env>', 'Entorno (development/production)', 'development')
+  .parse(process.argv);
+
+const env = program.opts().env;
+const envFilePath = `./src/.env.${env}`;
+dotenv.config({ path: envFilePath });
+
+console.log("Entorno",env);
 
 /*variables de entorno */
 module.exports = {
@@ -28,4 +35,7 @@ module.exports = {
     twilioPass: process.env.TWILIO_PASS,
     twilioToken: process.env.TWILIO_TOKEN,
     twilioSmsNumber: process.env.TWILIO_SMS_NUMBER,
+
+    //entorno
+    env: env,
 }

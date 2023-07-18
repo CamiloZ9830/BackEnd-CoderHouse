@@ -1,6 +1,7 @@
 const MongoProductDao = require('../dao/mongoDao/mongoProductDao');
 const ProductsRepository = require('../repositories/products.repository');
 const { faker } = require('@faker-js/faker');
+const { randomUUID } = require('crypto');
 
 
 class ProductService {
@@ -9,10 +10,13 @@ class ProductService {
     }
      
    async getProducts (limit, page, category, sort) {
-
-    if (typeof category === "string") return category = {category: { $regex: new RegExp(category, "i") }};
-
-          if (Object.keys(sort).length !== 0) return sort = {price: sort};  
+    
+    if (typeof category === "string") {
+      category = {category: { $regex: new RegExp(category, "i") }}
+    };
+    if (Object.keys(sort).length !== 0) {
+      sort = {price: sort}
+    };  
         try {
             const getProd = await this.repository.getProducts(limit, page, category, sort);
 
@@ -33,8 +37,10 @@ class ProductService {
           }
     };
 
-    async addProduct (product) {
+    async addProduct (product, userEmail) {
         try {
+            product["code"] = randomUUID();
+            product["owner"] = userEmail;
             const addProd = await this.repository.addProduct(product);
             return addProd;
           } catch (e) {

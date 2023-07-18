@@ -41,21 +41,37 @@ const generateToken = (user) => {
   return token;
 };
 
-const authenticateToken = (req, res, next) => {
-  const token = req.cookies.jwtCookieToken;
-  if (!token) return res.status(401).send({
-    error: "Not authenticated"
-  });
+const passwordUpdateToken = (user, secret) => {
+  const token = jwt.sign({user}, secret, {expiresIn: '2m'});
+  return token;
+};
 
-  jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
-    if (error) return res.status(403).send({error: "Not authorized"});
-    console.log("credentials", credentials);
-    req.user = credentials.user;
-    next();
-  });
+const authenticateToken = async (token, secret) => {
+  try {
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(token, secret, (error, decoded) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(decoded);
+        }
+      });
+    });
+
+    console.log('JWT verification successful');
+    return 'success';
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      console.error('JWT verification failed:', error);
+      return undefined;
+    } else {
+      console.error('JWT verification failed:', error);
+      return undefined;
+    }
+  }
 };
 
 
 
 module.exports = { hashPassword, comparePasswords, getAge,
-                   generateToken, authenticateToken, randomDate };
+                   generateToken, authenticateToken, randomDate, passwordUpdateToken };
