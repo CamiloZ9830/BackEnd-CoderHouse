@@ -24,8 +24,8 @@ const productsController = new ProductsController();
   router.get('/api/products/:pid', productsController.findProductById);
   
   
-   router.post('/api/products/', passportCall('jwt'),
-                  productsController.addProduct, 
+   router.post('/api/products/', passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]),
+                  productsController.createProduct, 
                   async (req, res) => {
             //io.sockets.emit('newProduct', [prod2, allProducts]);         
       });

@@ -1,0 +1,163 @@
+  paths:
+    /api/carts/:
+      post:
+        summary: Crea un carrito
+        tags:
+          - Carts
+        responses:
+          "200":
+            description: El carrito fue creado exitosamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Carts'
+          "500":
+            description: Error interno
+
+    /api/carts/{cid}:
+      get:
+        summary: Obtiene un carrito a partir del id
+        tags:
+          - Carts
+        parameters:
+        - name: cid
+          in: path
+          required: true
+          description: id del carrito que se desea solicitar.
+          schema:
+            $type: String
+        responses:
+          "200":
+            description: El carrito fue obtenido exitosamente de la base de datos
+            content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Carts'
+
+    /api/carts/{cid}/product/{pid}:
+      post:
+        summary: Agrega el id de un producto al carrito
+        tags:
+          -  Carts
+        parameters:
+        - name: cid
+          in: path
+          required: true
+          description: id del carrito que se desea solicitar.
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: id del producto Id que se desea agregar.
+          schema:
+            $type: String
+        responses:
+          "200":
+            description: Producto agregado
+            content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Carts'
+          "500":
+            description: Error interno
+      put:
+        summary: Actualiza la cantidad de un producto de un carrito a partir de su id
+        tags:
+          - Carts
+        parameters:
+        - name: cid
+          in: path
+          require: true
+          description: id del carrito que se desea solicitar.
+          schema:
+          $type: String
+        - name: pid
+          in: path
+          required: true
+          description: id del producto que se desea agregar cantidad.
+          schema:
+            $type: String      
+        responses:
+          "200":
+            description: Producto actualizado
+        requestBody:
+          required: true
+          content: 
+            application/json:
+              schema:
+                $ref: '#components/requestBodies/updateQuantity' 
+      delete: 
+        summary: Elimina un productoId de un carrito a partir del id
+        tags:
+          - Carts
+        parameters:
+        - name: cid
+          in: path
+          require: true
+          description: id del carrito que se desea solicitar.
+          schema:
+          $type: String
+        - name: pid
+          in: path
+          required: true
+          description: id del producto Id que se desea eliminar.
+          schema:
+            $type: String
+        responses:
+          "200":
+            description: Producto eliminado
+            content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Carts'
+
+      
+  components:
+    schemas:
+      Carts:
+        type: object
+        properties:
+          _id:
+            type: string
+            description: Id autogenerado de mongo
+          products:
+            type: array
+            items:
+              type: object
+              properties:
+                product:
+                  type: string
+                  format: ObjectId
+                  description: Id del producto (referencia a otro documento)
+                quantity:
+                  type: number
+                  minimum: 1
+                  maximum: 10
+                  description: Cantidad del producto en el carrito
+                _id:
+                  type: string
+                  format: ObjectId
+                  description: Id autogenerado del elemento en el carrito
+            description: Array que contiene los productos en el carrito
+          createdAt:
+            type: string
+            format: date-time
+            description: Fecha de creacion del documento
+        example:
+          _id: "6495e2c61d342fc37436e8cc"
+          products:
+            - product: "6495e2c61d342fc38963d8fg"
+              quantity: 5
+              _id: "64bf2dd35c4ac974d93a3ffd"
+          createdAt: "2023-04-15T05:33:01.166+00:00Z"
+
+    requestBodies:
+      updateQuantity:
+        type: object
+        properties:
+          quantity:
+            type: Number
+            description: Cantidad del producto
+        example:
+          quantity: 8

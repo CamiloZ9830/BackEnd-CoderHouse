@@ -1,0 +1,213 @@
+  paths:
+    /api/products/:
+      get:
+        summary: Obtiene un array de productos
+        tags:
+          - Products
+        responses:
+          "200":
+            description: Los productos fueron obtenidos satisfactoriamente de la base de datos
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Products'
+          "500":
+            description: Error interno
+
+      post:
+        summary: Crea un producto 
+        tags:
+          - Products
+        responses:
+          "200":
+            description: Producto creado
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#components/requestBodies/createProduct'
+
+    /api/products/{pid}:
+      get:
+        summary: Obtiene un producto a partir del Id
+        tags:
+          -  Products
+        parameters:
+        - name: pid
+          in: path
+          required: true
+          description: id del producto que se desea solicitar.
+          schema:
+            $type: String
+        responses:
+          "200":
+            description: Producto encontrado
+            content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Products'
+          "500":
+            description: Error interno
+      put:
+        summary: Actualiza un producto a partir de su id
+        tags:
+          - Products
+        parameters:
+        - name: pid
+          in: path
+          required: true
+          description: id del producto que desea solicitar.
+          schema:
+          $type: String
+        responses:
+          "200":
+            description: Producto actualizado
+        requestBody:
+          required: true
+          content: 
+            application/json:
+              schema:
+                $ref: '#components/requestBodies/updateProduct' 
+      delete: 
+        summary: Elimina productos a partir de su id
+        tags:
+          - Products
+        parameters:
+        - name: pid
+          in: path
+          required: true
+          description: id del producto que desea eliminar.
+          schema:
+          $type: String
+        responses:
+          "200":
+            description: Producto eliminado
+            content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Products'
+
+      
+  components:
+    schemas:
+      Products:
+        type: object
+        properties:
+          _id:
+            type: ObjectId
+            description: Id autogenerado de mongo
+          title:
+            type: String
+            description: Nombre del producto
+          description:
+            type: String
+            description: Descripcion del producto
+          price: 
+            type: Number
+            description: Precio del producto
+          thumbnail:
+            type: Array
+            items:
+              type: String
+            description: Array de imagenes Urls
+          status:
+            type: Boolean
+            description: Estado del producto
+          code:
+            type: String
+            description: Codigo del producto
+          stock:
+            type: Number
+            description: Stock del producto
+          owner:
+            type: String
+            description: id o correo del propietario
+          categoria:
+            type: String
+            descripcion: Categoria del producto
+          createdAt:
+            type: String
+            format: date-time
+            description: Fecha de creacion del documento
+        example:
+          _id: ObjectId("6495e2c61d342fc37436e8cc")
+          title: Frog 40 Kids Bike - 14 Inch
+          description: The Frog 40 is an easier rolling, lighter weight 14 inch-wheel kids' bike for ages 3 - 4 years
+          price: 899
+          thumbnail: ["https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"]
+          status: true
+          code: 45684-3a548-9B66y-6wl
+          stock: 21
+          owner: jon@mail.com
+          categoria: Kids Bikes
+          createdAt: 2023-04-15T05:33:01.166+00:00Z
+
+    requestBodies:
+      createProduct:
+        type: object
+        properties:
+          title:
+            type: String
+            description: Nombre del producto
+          description:
+            type: String
+            description: Descripcion del producto
+          price: 
+            type: Number
+            description: Precio del producto
+          thumbnail:
+            type: Array
+            items:
+              type: String
+            description: Array de imagenes Urls
+          status:
+            type: Boolean
+            description: Estado del producto
+          stock:
+            type: Number
+            description: Stock del producto
+          owner:
+            type: String
+            description: id o correo del propietario
+          categoria:
+            type: String
+            descripcion: Categoria del producto
+        example:
+          title: Frog 40 Kids Bike - 14 Inch
+          description: The Frog 40 is an easier rolling, lighter weight 14 inch-wheel kids' bike for ages 3 - 4 years
+          price: 899
+          thumbnail: ["https://images2.giant-bicycles.com/b_white,c_pad,h_400,q_80/if1exkoa1uiqhhbqj4qo/Talon292_ColorAKnightShield.jpg"]
+          status: true
+          stock: 21
+          owner: jon@mail.com
+          categoria: Kids Bikes
+
+      updateProduct:
+        type: object
+        properties:
+          title:
+            type: String
+            description: Nombre del producto
+          description:
+            type: String
+            description: Descripcion del producto
+          price: 
+            type: Number
+            description: Precio del producto   
+          status:
+            type: Boolean
+            description: Estado del producto
+          stock:
+            type: Number
+            description: Stock del producto
+        example:
+          title: Frog 40 Kids Bike - 14 Inch
+          description: The Frog 40 is an easier rolling, lighter weight 14 inch-wheel kids' bike for ages 3 - 4 years
+          price: 899
+          status: true
+          stock: 21
+
+  

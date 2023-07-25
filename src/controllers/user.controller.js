@@ -89,6 +89,45 @@ class UserController {
         }
     };
 
+    userLoginPostman = async (req, res) => {
+        const { email, password } = req.body;
+
+        try {
+            let user = {};
+
+            if (email === adminEmail) {
+                
+                if (password === adminPassword) {
+                    user = {
+                        userName: adminEmail,
+                        role: "admin"
+                    };
+                } else {
+                    req.logger.warning("Invalid admin credentials", e.message)
+                    return res.status(400).send({ status: "error", error: "Invalid admin credentials" });
+                }
+            } else {
+                
+                const userDto = new UserDto(req.body);
+                const userCredentials = await userDto.dtoLogin();
+                user = await this.userService.userLogIn(userCredentials);                          
+            }
+           
+            const access_token = generateToken(user);
+    
+            res.cookie(jwtCookieToken, access_token, {
+                maxAge: 30 * 60 * 1000,
+                httpOnly: true
+            }).status(200).redirect(`/api/products/`);
+
+
+        } catch (e) {
+            req.logger.error(e.message);
+            if (e.message === "Invalid email") return res.status(401).send({ status: "error", error: "Invalid email" });
+            if (e.message === "Invalid password") return res.status(401).send({ status: "error", error: "Invalid password" });     
+        }
+    };
+
     gitHubLogin = async (req, res) => {
  
         const access_token = generateToken(req.user);
@@ -96,7 +135,7 @@ class UserController {
         res.cookie(jwtCookieToken, access_token, {
             maxAge: 30 * 60 * 1000,
             httpOnly: true
-        }).status(200).redirect('/products');
+        }).status(200).redirect('/api/products');
     };
 
 
@@ -176,7 +215,7 @@ class UserController {
         res.cookie(jwtCookieToken, access_token, {
             maxAge: 30 * 60 * 1000,
             httpOnly: true
-        }).status(200).send({ status: "success", message: "Your user role was successfully updated" });
+        }).status(200).send({ status: "success", message: `Your user role was successfully updated, your role now is ${changeRole._doc.role}` });
             return changeRole;
         }catch(e){
             res.status(400).send( { status: "error", message: e.message } );

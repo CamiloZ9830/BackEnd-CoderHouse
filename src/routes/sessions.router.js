@@ -17,8 +17,11 @@ router.get('/userFlowTest', userController.generateFakeUser);
 /*loggerTest*/
 router.get('/loggerTest', userController.loggerTest);
 
-/*login de usuarios con la estrategia passport-jwt*/
+/*login de usuarios (render) con la estrategia passport-jwt*/
 router.post('/login', userController.userLogin);
+
+/*login postman*/
+router.post('/user-login', userController.userLoginPostman);
 
 /*des-loguea un usuario de github o de jwt */
 router.get('/logout', userController.userLogout);

@@ -69,7 +69,7 @@ class MongoProductsDao {
                  { $inc: {stock: -1 * quantity} }
               );
             };
-            return { status: "succes", message: "Stock Updated" };
+            return { status: "success", message: "Stock Updated" };
         } catch (e) {
             throw new Error(e.message)
         }

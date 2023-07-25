@@ -11,8 +11,10 @@ const passport = require('passport');
 const MongoSingleton = require('./database/MongoDb');
 const { port } = require('./config/dotenvVariables.config');
 const { errorHandler } = require('./middlewares/router.middlewares/error.middlewares');
-const { winstonLogger, errorHandlerLogger } = require('./utils/logger/logger.utils')
-
+const { winstonLogger, errorHandlerLogger } = require('./utils/logger/logger.utils');
+const { swaggerOptions } = require('../docs/swagger.config');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUiExpress = require('swagger-ui-express');
 
 /*winston logger*/
 app.use(winstonLogger);
@@ -21,7 +23,6 @@ app.use(errorHandlerLogger);
 const httpServer = app.listen(port, () => {
 console.log(`Server is listening on port ${port}...`);
 }); 
-
 
 /*Servidor websocket instanciado con la configuracion del servidor http de express*/
 const webSocketServer = createWebSocketServer(httpServer);
@@ -49,9 +50,12 @@ app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
 
+/*swagger config documentation*/
+const specs = swaggerJSDoc(swaggerOptions);
 
 
 /*rutas */
+app.use('/docs/', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 app.use('/', productsRouter);
 app.use('/', cartsRouter);
 app.use('/', viewsRouter);

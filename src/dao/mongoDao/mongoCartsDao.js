@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const cartsModel = require('../modelsMongo/carts.model');
 
 
+
 class MongoCartsDao {
     constructor () {
         this.model = cartsModel
@@ -214,11 +215,11 @@ class MongoCartsDao {
         /*elimina un producto del carrito y si la cantidad el mas de uno resta -1 al quantity*/
     deleteProductId = async (cartId, prodId) => {
       try {
-       await this.cart.updateOne(
+       await this.model.updateOne(
           { _id: cartId, 'products.product': prodId },
           { $inc: { 'products.$.quantity': -1 } }
         );
-    
+        
         const deleteProduct = await this.model.updateOne(
           { _id: cartId },
           { $pull: { products: { product: prodId, quantity: 0 } } }

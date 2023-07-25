@@ -13,7 +13,7 @@ class ProductsController {
         }
 
 
-        getProducts = async (req, res) => {
+        getProductsRender = async (req, res) => {
 
             try {
                 const limit = req.query.limit || 8;
@@ -50,7 +50,37 @@ class ProductsController {
             }
         };
 
-        addProduct = async (req, res, next) => {
+        getProducts = async (req, res) => {
+
+            try {
+                const limit = req.query.limit || 8;
+                let page = parseInt(req.query.page) || 1;
+                const category = req.query.category || {};
+                const sort = req.query.sort || {};  
+                   
+                const getDbProducts = await this.productService.getProducts(Number(limit), page, category, sort);
+        
+                if (page > getDbProducts.totalPages) {
+                    return res.redirect(`/products?page=${getDbProducts.totalPages}`);         
+                }
+                else if (isNaN(page) || page < 1) {
+                    return res.redirect(`/products?page=${1}`);
+                }  
+                
+                    
+                getDbProducts ? res.status(200).send({status: 'success', payload: getDbProducts})
+                : res.status(400).send({status: 'error', payload: getDbProducts});
+                
+            }
+        
+            catch (e) {
+                res.status(500).json({message: `Error: ${e.message}`});
+            }
+        };
+
+        
+
+        createProduct = async (req, res, next) => {
             try {
                     const product = req.body;
                     const { email } = req.user;

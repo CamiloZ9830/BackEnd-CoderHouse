@@ -54,7 +54,7 @@ router.get('/realTimeChat', passportCall('jwt'), handlePermissions(["USER", "PRE
 
 
 /* se usas queries como limit, page, product category (RoadBikes, ElectricBikes, accesorios etc.) y sort */
-router.get('/products', passportCall('jwt'), productsController.getProducts);
+router.get('/products', passportCall('jwt'), productsController.getProductsRender);
 
 /*Esta ruta renderiza los productos del carrito de un suario por id de carrito */
 router.get('/carts/:cid/', passportCall('jwt'), cartController.getCartByIdPopulate);

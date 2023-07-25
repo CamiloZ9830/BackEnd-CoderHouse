@@ -1,4 +1,4 @@
-const { EError } = require("../../services/customErrors/error.enums");
+const { EError } = require("../../services/customizedErrors/error.enums");
 
 const errorHandler = (error, req, res, next) => {
     console.log(error.cause);

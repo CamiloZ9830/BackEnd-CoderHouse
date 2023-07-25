@@ -81,6 +81,7 @@ const objectValidation = (req, res, next) => {
   const ownerValidate = async (req, res, next) => {
     const { email } = req.user;
     const { pid } = req.params;
+    console.log(email);
       try{
         const getProd = await mongoProductManager.findProductById(pid);
         if(getProd?.owner === email){
@@ -95,6 +96,22 @@ const objectValidation = (req, res, next) => {
       }
   };
 
+  const ownerValidatePostman = async (req, res, next) => {
+    const { email } = req.body;
+    const { pid } = req.params;
+      try{
+        const getProd = await mongoProductManager.findProductById(pid);
+        if(getProd?.owner === email){
+          res.status(409).send("Cannot buy your own products");
+          return;
+        }else {
+          next();
+          return;
+        }
+      }catch(e) {
+        throw new Error(e.message);
+      }
+  };
    const ownerDeleteProduct = async (req, res, next) => {
       const { email, role } = req.user;
       const  { pid } = req.params;
@@ -127,4 +144,5 @@ module.exports = {
     objectValidationUpdate,
     ownerValidate,
     ownerDeleteProduct,
+    ownerValidatePostman
 }
