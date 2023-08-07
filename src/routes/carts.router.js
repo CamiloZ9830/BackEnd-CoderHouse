@@ -22,7 +22,7 @@ router.get('/api/carts/:cid/', cartController.getCartById);
 
 router.put('/api/carts/:cid', cartController.arrayOfProducts);
 
-router.post('/api/carts/:cid/product/:pid/',passportCall('jwt'), ownerValidate, cartController.addProductId);
+router.post('/api/carts/:cid/product/:pid/', cartController.addProductId);
 
 router.put('/api/carts/:cid/product/:pid/', cartController.addQuantity);
 

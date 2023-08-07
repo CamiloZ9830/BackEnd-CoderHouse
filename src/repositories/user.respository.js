@@ -43,6 +43,20 @@ class UserRepository {
             }
         };
 
+        deleteUser = async (attr, email) => {
+            try{
+                const findUser = await this.userDao.getUser(email);
+                const deleteUser = await this.userDao.deleteUser(attr, email);
+                if(deleteUser.deletedCount === 1 && findUser?.cartId) {
+                    await this.cartDao.deleteCart(findUser.cartId);
+                }
+                return deleteUser;
+            }catch(e){
+                console.error(e.message);
+            }
+        };
+
+
         fieldValidator = async (field) => {
             try {
                 const fieldExists = await this.userDao.fieldValidator(field);

@@ -61,9 +61,16 @@ class MongoUsersDao {
            }
      };
 
-
-
-
+     deleteUser = async (attr, email) => {
+        try{
+            const deleteUser = await this.model.deleteOne(
+                {[attr]: email},         
+            )
+            return deleteUser;
+        }catch(e){
+            console.error(e.message);
+        }
+     };
 };
 
 module.exports = MongoUsersDao;

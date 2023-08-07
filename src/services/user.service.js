@@ -88,6 +88,15 @@ class UserService {
         }
       };
 
+      async deleteUser (attr, email) {
+        try{
+          const deleteUser = await this.repository.deleteUser(attr, email);
+          return deleteUser;
+        }catch(e){
+          throw new Error(e.message);
+        }
+      };
+
       /*fake user generator /@faker-js */
       async fakeUser() {
         const userRoleEnum = {

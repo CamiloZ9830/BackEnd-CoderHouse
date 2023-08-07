@@ -118,7 +118,7 @@ class UserController {
             res.cookie(jwtCookieToken, access_token, {
                 maxAge: 30 * 60 * 1000,
                 httpOnly: true
-            }).status(200).redirect(`/api/products/`);
+            }).status(200).json({ status: "success", token: access_token });;
 
 
         } catch (e) {
@@ -219,6 +219,19 @@ class UserController {
             return changeRole;
         }catch(e){
             res.status(400).send( { status: "error", message: e.message } );
+        }
+     };
+
+     deleteUser = async (req, res) => {
+        const { uid } = req.params;
+        try{
+            const deleteUser = await this.userService.deleteUser("email", uid);
+            res.status(200).send( { status: "success", payload: deleteUser });
+            return deleteUser;
+        }catch(e){
+            req.logger.error(e.message);
+            res.status(400).send( { status: "error", message: e.message } );
+            throw (e);
         }
      };
 

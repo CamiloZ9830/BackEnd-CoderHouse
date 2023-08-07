@@ -33,6 +33,9 @@ router.post('/restore/password/:userId/:token', userController.passwordReset);
 /*cambiar rol*/
 router.post('/change/role', passportCall('jwt'), userController.changeRole);
 
+/*elimina el usuario*/
+router.delete('/user-delete/:uid', userController.deleteUser);
+
 /*github login*/
 router.get('/api/session/github', passport.authenticate('github', {scope:['user:email']}), async (req, res) => {});
 

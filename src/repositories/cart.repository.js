@@ -27,6 +27,16 @@ class CartRepository {
            }
         };
 
+        getCartProductsOrder = async (attribute, arrayOfProducts) => {
+          try{
+            const getBatchOfProducts = this.productDao.findMany(attribute, arrayOfProducts);
+            if(!getBatchOfProducts) return console.log("error gettig products from database");
+            return getBatchOfProducts;
+          }catch(e){
+            throw new Error(e.message);
+          }
+        }; 
+
         substractProductStock = async (prodId, quantity) => {
           try{
                const updateStock = this.productDao.substractProduct(prodId, quantity);

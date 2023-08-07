@@ -2,6 +2,7 @@ const MongoCartsDao = require('../dao/mongoDao/mongoCartsDao');
 const MongoProductsDao = require('../dao/mongoDao/mongoProductDao');
 const MongoTicketDao = require('../dao/mongoDao/mongoTicketDao');
 const CartRepository = require('../repositories/cart.repository');
+const mongoose = require('mongoose');
 const { randomUUID } = require('crypto');
 
 
@@ -35,10 +36,14 @@ class CartService {
         const quantitiesToSubstract = {};
         const productsToRemove = [];
         let amount = 0;
-        
+
+        const arrayOfProductsId = getCart.products.map( item => item.product);
+        const batchProducts = await this.repository.getCartProductsOrder("_id", arrayOfProductsId);
+    
         for (const item of getCart.products) {
 
-            const getProd = await this.repository.getProductOrderData(item.product);
+            const getProd = batchProducts.find(product => product._id.toString() === item.product); 
+           
             if (getProd?.stock >= item.quantity) {
                   quantitiesToSubstract[getProd._id] = item.quantity;
                   productsToRemove.push(getProd._id);

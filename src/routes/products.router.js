@@ -24,8 +24,7 @@ const productsController = new ProductsController();
   router.get('/api/products/:pid', productsController.findProductById);
   
   
-   router.post('/api/products/', passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]),
-                  productsController.createProduct, 
+   router.post('/api/products/', productsController.createProduct, 
                   async (req, res) => {
             //io.sockets.emit('newProduct', [prod2, allProducts]);         
       });
@@ -36,7 +35,7 @@ const productsController = new ProductsController();
    });
   
   
-   router.delete('/api/products/:pid/',passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]), ownerDeleteProduct, productsController.deleteProductById, async (req, res) => { 
+   router.delete('/api/products/:pid/', productsController.deleteProductById, async (req, res) => { 
       console.log("success");  
              //io.sockets.emit('newProduct', {status: "success", massage: `product with pid ${pid} deleted`, payload: allProducts});     
    });

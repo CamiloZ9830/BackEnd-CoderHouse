@@ -1,4 +1,3 @@
-
 const productsModel = require('../modelsMongo/products.model')
 
 class MongoProductsDao {
@@ -32,6 +31,15 @@ class MongoProductsDao {
                       console.error(e.message);
                     }
          };
+
+         findMany = async (attribute, arrayOfProducts) => {
+          try{
+            const findMany = await this.model.find({ [attribute]: { $in: arrayOfProducts } });
+            return findMany;
+          }catch(e){
+            console.error(e.message);
+          }
+         }
 
 
          findProductById = async (id) => {

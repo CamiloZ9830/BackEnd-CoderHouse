@@ -83,7 +83,7 @@ class MongoCartsDao {
               { $addToSet: { products: { product: prodId, quantity: 1 } } }
             );
           }
-          return 'Product added to cart';
+          return result;
         } catch (e) {
           console.log(e.message);         
         }
@@ -282,6 +282,17 @@ class MongoCartsDao {
                  console.error(e.message);
             }
     };
+
+    deleteCart = async (cartId) => {
+      try{
+        const deleteCart = await this.model.deleteOne(
+          {_id: cartId}
+        );
+        return deleteCart.deletedCount;
+      }catch(e){
+        console.error(e.message);
+      }
+    }
 
 
               disconnect = async () => {

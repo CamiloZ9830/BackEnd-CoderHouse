@@ -83,8 +83,9 @@ class ProductsController {
         createProduct = async (req, res, next) => {
             try {
                     const product = req.body;
-                    const { email } = req.user;
+                    const { email } = req.user || 'admin';
                     const { title, category, price } = product;
+                    console.log("this error",product, email);
                     /* manejador de errores customizados que valida las propiedades, titulo, codigo, categoria y precio de un producto*/
                     if(!title || !category || !price){
                         CustomError.createError({
@@ -97,7 +98,8 @@ class ProductsController {
                     const newProduct = await this.productService.addProduct(product, email);             
                     res.status(201).send({ status: 'success', payload: newProduct});
             } catch(e) {
-                next(e);
+                req.logger.error(e.message);
+                next(e.message);
             }
         };
 

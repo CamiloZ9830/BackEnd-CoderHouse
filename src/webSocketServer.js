@@ -31,6 +31,7 @@ const createWebSocketServer = (httpServer) => {
 
       /*send user email*/
      const cookie = socket.handshake.headers.cookie;
+     //console.log("extracted token: ", cookie.split('=')[1]);
      const token = extractTokenFromCookie(cookie);
 
      if (!token) {
@@ -78,6 +79,7 @@ function extractTokenFromCookie(cookieHeader) {
   const tokenRegex = /jwtCookieToken=([^;]+)/;
   const match = cookieHeader.match(tokenRegex);
   if (match) {
+    console.log(match[1]);
     return match[1];
   }
   return null;

@@ -86,7 +86,7 @@ class CartController {
                 const addProductId = await this.cartService.addProductId(cid, pid);
 
                 if (addProductId) {
-                    return res.redirect('back'); /*res.status(200).send({status: 'success', payload: addProductId})*/
+                    return /*res.redirect('back');*/ res.status(200).send({status: 'success', payload: addProductId});
                 } else {
                     return res.status(404).send({status: 'error', message: 'Resource Not Found'});
                 }
