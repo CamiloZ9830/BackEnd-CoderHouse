@@ -35,7 +35,7 @@ const createWebSocketServer = (httpServer) => {
      const token = extractTokenFromCookie(cookie);
 
      if (!token) {
-      console.error('JWT token not found in the cookie.');
+      console.error('JWT token not found in the cookie. Please Try again!');
       return;
     }
    

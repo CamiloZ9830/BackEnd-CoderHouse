@@ -56,6 +56,24 @@ class UserRepository {
             }
         };
 
+        updateStatus = async (userId, document, ref) => {
+             try{
+                const updateSatus = await this.userDao.updateDocStatus(userId, document, ref);
+                return updateSatus; 
+            }catch(e){
+                console.error(e.message);
+            }
+        };
+
+        lastConnection = async (userId) => {
+            try{
+                const updateLastConnection = await this.userDao.lastConnection(userId);
+                return updateLastConnection;
+            }catch(e){
+                console.error(e.message);
+            }
+        };
+
 
         fieldValidator = async (field) => {
             try {

@@ -4,6 +4,8 @@ const UserController = require('../controllers/user.controller');
 const router = Router();
 const passport = require('passport');
 const { passportCall } = require('../utils/authorization.utils');
+const uploads = require('../utils/multer.utils');
+
 
 
 const userController = new UserController();
@@ -24,14 +26,17 @@ router.post('/login', userController.userLogin);
 router.post('/user-login', userController.userLoginPostman);
 
 /*des-loguea un usuario de github o de jwt */
-router.get('/logout', userController.userLogout);
+router.get('/logout', passportCall('jwt'), userController.userLogout);
 
 /*recuperacion de contraseña*/
 router.get('/email/password-reset', userController.sendPasswordRecovery);
 router.post('/restore/password/:userId/:token', userController.passwordReset);
 
+/*subir documentacion*/
+router.post('/api/users/:uid/documents', passportCall('jwt'), uploads, userController.uploadUserDocuments);
+
 /*cambiar rol*/
-router.post('/change/role', passportCall('jwt'), userController.changeRole);
+router.post('/api/users/premium/:uid/', passportCall('jwt'), userController.changeRole);
 
 /*elimina el usuario*/
 router.delete('/user-delete/:uid', userController.deleteUser);

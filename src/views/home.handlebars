@@ -14,11 +14,14 @@
       <a href="/realTimeChat">
             Chat
       </a>
+      <a href="/upload">
+            Agregar Documentos
+      </a>
   </div>
 
 {{#if userSession}}
-    <h1>Bienvenido {{userSession.role}}!  {{userSession.userName}}</h1> 
-    <form action="/change/role" method="POST">
+    <h1>Bienvenido {{userSession.role}}! {{userSession.userName}}</h1> 
+    <form action="/api/users/premium/{{userSession._id}}" method="POST">
     <input type="hidden" name="_method" value="POST">
     <button type="submit">Cambiar rol, tu rol es {{userSession.role}}</button>
     </form>

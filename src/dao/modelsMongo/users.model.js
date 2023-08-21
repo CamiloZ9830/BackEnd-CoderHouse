@@ -45,6 +45,22 @@ const userSchema = new mongoose.Schema({
         ref: 'carts',
         default: null
     },
+    documentsStatus: {
+        type: String,
+        enum: ['complete', 'incomplete', 'empty'],
+        default: 'empty'
+        },
+    documents: [{
+        name: {
+            type: String,
+            enum: ['identificacion', 'domicilio', 'cuenta'],
+            required: true
+        },
+        reference: {
+            type: String,
+            required: true
+        }
+    }],
     createdAt: {
         inmutable: true,
         type: Date,
@@ -53,10 +69,13 @@ const userSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: () => Date.now()
+    },
+    lastConnection: {
+        type: Date,
+        default: () => Date.now()
     }
     
 });
-
 
 const userModel = mongoose.model(usersCollection, userSchema);
 

@@ -70,12 +70,22 @@ class UserService {
           if (!comparePasswords(password, getUser.password)) {
             throw new Error('Invalid password');
             } else {
+              await this.lastConnection(getUser._id);
               getUser["password"] = null;
             }
           return getUser;
         } catch (e) {
           console.error(e.message);
           throw new Error(e.message);
+        }
+      };
+
+      async lastConnection(userId) {
+        try {
+          const update = await this.repository.lastConnection(userId);
+          return update;
+        } catch (e) {
+          console.error(e.message);
         }
       };
 
@@ -96,6 +106,15 @@ class UserService {
           throw new Error(e.message);
         }
       };
+
+      async updateDocument (userId, document, ref) {
+        try{
+          const updateUserStatus = await this.repository.updateStatus(userId, document, ref);
+          return updateUserStatus;
+        }catch(e){
+          throw new Error(e.message);
+        }
+      }
 
       /*fake user generator /@faker-js */
       async fakeUser() {

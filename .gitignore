@@ -11,5 +11,8 @@ logsErrors.log
 logsFatal.log
 logsInternalErrors.log
 
+# /files
+src/files/
+
 
 

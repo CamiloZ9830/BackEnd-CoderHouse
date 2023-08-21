@@ -66,6 +66,7 @@ router.post('/carts/:cid/remove-product/:pid', passportCall('jwt'), cartControll
 
 router.post('/carts/:cid/purchase', passportCall('jwt'), cartController.purchaseOrder);
 
+
 router.get('/register', async (req, res) => {
     try {
         res.render('register', {});
@@ -103,20 +104,26 @@ router.get('/change/password/:userId/:token', async (req, res) => {
         req.logger.error(e.message);
         res.status(500).json({message: `Error: ${e.message}`});
     }
-
 });
-
 
 router.get('/products/create-product', passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]),  async (req, res) => {
     try{
         //req.logger.info({userIs: req.user.role});
-        res.status(201).render('createProduct', {});
+        res.status(200).render('createProduct', {});
     }catch(e){
         req.logger.error(e.message);
         res.status(500).json({message: `Error: ${e.message}`});
     }
-
 });
+
+router.get('/upload/', async (req, res) => {
+    try{
+        res.status(200).render('uploadDocs', {});
+    }catch(e){
+        req.logger.error(e.message);
+        res.status(500).json({message: `Error: ${e.message}`});
+    }
+})
 
 /*ruta de handlebars para eliminar producto*/
 router.post('/api/product/:pid/', passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]), ownerDeleteProduct, productsController.deleteProductById);

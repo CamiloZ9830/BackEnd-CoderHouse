@@ -54,12 +54,10 @@ class UserController {
         const { email, password } = req.body;
 
         try {
-            let user = {};
-
             if (email === adminEmail) {
                 
                 if (password === adminPassword) {
-                    user = {
+                    this.user = {
                         userName: adminEmail,
                         role: "admin"
                     };
@@ -67,14 +65,13 @@ class UserController {
                     req.logger.warning("Invalid admin credentials", e.message)
                     return res.status(400).send({ status: "error", error: "Invalid admin credentials" });
                 }
-            } else {
-                
+            } else {              
                 const userDto = new UserDto(req.body);
                 const userCredentials = await userDto.dtoLogin();
-                user = await this.userService.userLogIn(userCredentials);                          
+                this.user = await this.userService.userLogIn(userCredentials);                  
             }
            
-            const access_token = generateToken(user);
+            const access_token = generateToken(this.user);
     
             res.cookie(jwtCookieToken, access_token, {
                 maxAge: 30 * 60 * 1000,
@@ -93,12 +90,10 @@ class UserController {
         const { email, password } = req.body;
 
         try {
-            let user = {};
-
             if (email === adminEmail) {
                 
                 if (password === adminPassword) {
-                    user = {
+                    this.user = {
                         userName: adminEmail,
                         role: "admin"
                     };
@@ -110,10 +105,10 @@ class UserController {
                 
                 const userDto = new UserDto(req.body);
                 const userCredentials = await userDto.dtoLogin();
-                user = await this.userService.userLogIn(userCredentials);                          
+                this.user = await this.userService.userLogIn(userCredentials);                          
             }
            
-            const access_token = generateToken(user);
+            const access_token = generateToken(this.user);
     
             res.cookie(jwtCookieToken, access_token, {
                 maxAge: 30 * 60 * 1000,
@@ -141,6 +136,7 @@ class UserController {
 
      userLogout = async (req, res) => { 
         try {
+            await this.userService.lastConnection(req.user._id);
             res.clearCookie(jwtCookieToken);
             res.status(200).redirect('/login');
         } catch(e) {
@@ -201,11 +197,17 @@ class UserController {
 
      /*
      cambia el rol de usuario de 'user' a 'premium' y viceversa
-     !al cambiar el rol el el req.user no se actualiza, asi que se genera un nuevo token y el req.user se actualiza con el nuevo rol y la session se mantiene
+     !al cambiar el rol el req.user no se actualiza, asi que se genera un nuevo token y el req.user se actualiza con el nuevo rol y la session se mantiene
       */
      changeRole = async (req, res) => {
-        const { _id, role } = req.user;
+        const { _id, role, email, documentsStatus } = req.user;
+        const { uid } = req.params;
+        const validateEmail = { email: email};
         try{
+            this.user = await this.userService.fieldValidator(validateEmail);
+            if(this.user?.role === 'user' && this.user?.documentsStatus !== 'complete'){
+                return res.status(409).json({status: "conflict", message: "Necesitas completar la documentacion para cambiar a premium"});
+            }
             const changeRole = await this.userService.switchUserRole(_id, role);
             if(!changeRole) return res.status(400).send({status: "error", message: "There was an error. Try again!"});
             req.user["role"] = changeRole._doc.role;
@@ -215,7 +217,7 @@ class UserController {
         res.cookie(jwtCookieToken, access_token, {
             maxAge: 30 * 60 * 1000,
             httpOnly: true
-        }).status(200).send({ status: "success", message: `Your user role was successfully updated, your role now is ${changeRole._doc.role}` });
+        }).status(200).send({ status: "success", message: `Your user role was successfully updated, your role is now ${changeRole._doc.role}` });
             return changeRole;
         }catch(e){
             res.status(400).send( { status: "error", message: e.message } );
@@ -234,6 +236,27 @@ class UserController {
             throw (e);
         }
      };
+
+    uploadUserDocuments = async (req, res) => {
+        const { uid } = req.params;
+        const { identificacion, domicilio, cuenta } = req.files;
+        try{        
+            if(identificacion){
+                await this.userService.updateDocument(uid, identificacion[0].fieldname, identificacion[0].path);       
+            }
+            if(domicilio){
+                await this.userService.updateDocument(uid, domicilio[0].fieldname, domicilio[0].path);                      
+            }
+            if(cuenta){
+                await this.userService.updateDocument(uid, cuenta[0].fieldname, cuenta[0].path);
+            }
+
+           return res.status(201).json({ status: 'success', payload: req.files });
+          
+        }catch(e){
+            res.status(400).send( { status: "error", message: e.message } );
+        }
+    };
 
 
      generateFakeUser = async (req, res) => {

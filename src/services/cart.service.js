@@ -2,7 +2,6 @@ const MongoCartsDao = require('../dao/mongoDao/mongoCartsDao');
 const MongoProductsDao = require('../dao/mongoDao/mongoProductDao');
 const MongoTicketDao = require('../dao/mongoDao/mongoTicketDao');
 const CartRepository = require('../repositories/cart.repository');
-const mongoose = require('mongoose');
 const { randomUUID } = require('crypto');
 
 
