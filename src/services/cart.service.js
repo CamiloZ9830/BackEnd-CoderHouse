@@ -36,13 +36,17 @@ class CartService {
         const productsToRemove = [];
         let amount = 0;
 
+        
         const arrayOfProductsId = getCart.products.map( item => item.product);
+        /*Se crea un array que contendra los productos a comprar y hara la query en bulk encontrando todos los dentro del array en una sola consulta*/
         const batchProducts = await this.repository.getCartProductsOrder("_id", arrayOfProductsId);
-    
+        
+        /*Se filtran todos los productos que tienen stock y se pushean acordemente a arrays que pasan a su respectiva query y       **actualiza el inventario de los respectivos productos
+                                                                                                                                    **remueve los productos con inventario suficiente del carrito
+                                                                                                                                    **registra los productos a la orden de compra
+          Se realizan las queries en bulk y no se ejecuta ninguna query a la base de datos dentro del for loop evitando asi el famoso N+1 query problem.*/
         for (const item of getCart.products) {
-
-            const getProd = batchProducts.find(product => product._id.toString() === item.product); 
-           
+            const getProd = batchProducts.find(product => product._id.toString() === item.product.toString()); 
             if (getProd?.stock >= item.quantity) {
                   quantitiesToSubstract[getProd._id] = item.quantity;
                   productsToRemove.push(getProd._id);
@@ -68,7 +72,7 @@ class CartService {
                       amount: amount,
         };
 
-        //console.log("purchaseOrder: ", purchaseOrder);
+        console.log("purchaseOrder: ", purchaseOrder);
         
         await this.repository.saveTicketPurchase(purchaseOrder);
 

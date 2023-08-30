@@ -1,7 +1,8 @@
 
 class ProductsRepository {
-    constructor(productDao) {
-        this.productDao= productDao;
+    constructor(productDao, userDao) {
+        this.productDao = productDao;
+        this.userDao = userDao;
     }
 
     getProducts = async (limit, page, category, sort) => {       
@@ -33,6 +34,18 @@ class ProductsRepository {
         return console.error(e.message);
       }
    };
+
+   findOwner = async (attr, value) => {      
+    try{
+      const findProd = await this.userDao.getUser(attr, value);
+      return findProd;  
+    }
+    catch (e) {
+      return console.error(e.message);
+    }
+ };
+
+
 
    substractStock = async (prodId, quantity) => {
     try{

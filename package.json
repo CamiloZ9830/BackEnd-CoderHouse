@@ -8,7 +8,7 @@
     "carts-test": "mocha test/carts.test.js",
     "session-test": "mocha test/session.test.js",
     "dev": "npx nodemon src/app.js --env development",
-    "prod": "node src/app.js --env production"
+    "start": "node src/app.js --env production"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
     "mongoose": "^7.0.3",
     "mongoose-paginate-v2": "^1.7.1",
     "multer": "^1.4.5-lts.1",
+    "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.3",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",

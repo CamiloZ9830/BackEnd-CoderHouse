@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const usersCollection = 'users';
 
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        inmutable: true,
+        immutable: true,
         default: ''
     },
     lastName: {
         type: String,
-        inmutable: true,
+        immutable: true,
         default: ''
         },
     userName: {
@@ -22,13 +23,13 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         lowercase: true,
-        inmutable: true,
+        immutable: true,
         unique: true,
         default: ''
     },
     dateOfBirth: {
         type: String,
-        inmutable: true,
+        immutable: true,
         default: ''
     },
     password: {
@@ -62,7 +63,7 @@ const userSchema = new mongoose.Schema({
         }
     }],
     createdAt: {
-        inmutable: true,
+        immutable: true,
         type: Date,
         default: () => Date.now()
     },
@@ -77,6 +78,8 @@ const userSchema = new mongoose.Schema({
     
 });
 
+userSchema.index({ lastConnection: 1 }, { expireAfterSeconds: 30 * 60 }); 
+userSchema.plugin(mongoosePaginate);
 const userModel = mongoose.model(usersCollection, userSchema);
 
 module.exports = userModel;

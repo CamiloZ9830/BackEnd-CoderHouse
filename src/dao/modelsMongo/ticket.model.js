@@ -5,18 +5,18 @@ const ticketCollection = 'order';
 const ticketSchema = new mongoose.Schema({
       code: {
          type: String,
-         inmutable: true,
+         immutable: true,
          unique: true,
          required: true
       },
       buyerEmail: {
          type: String,
-         inmutable: true,
+         immutable: true,
       },
       orderBy: {
          type: mongoose.SchemaTypes.ObjectId,
          ref: 'user',
-         inmutable: true,
+         immutable: true,
          required: true
       },
       orderProducts: [{
@@ -39,7 +39,7 @@ const ticketSchema = new mongoose.Schema({
       },
       createdAt: {
         type: Date,
-        inmutable: true,
+        immutable: true,
         default: () => Date.now()
      },
      updatedAt: {

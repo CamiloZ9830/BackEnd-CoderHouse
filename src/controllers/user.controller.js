@@ -13,6 +13,57 @@ class UserController {
          this.user = null;
      }
 
+     getAllUsers = async (req, res) => {
+        try{
+            const limit = parseInt(req.query.limit) || 8;
+            let page = parseInt(req.query.page) || 1;
+            const sort = req.query.sort || {};
+            const role = req.query.role || {};
+
+            const getAllUsers = await this.userService.getUsers(limit, page, role, sort);
+
+            if (page > getAllUsers.totalPages) {
+                return res.redirect(`/products?page=${getAllUsers.totalPages}`);         
+            }
+            else if (isNaN(page) || page < 1) {
+                return res.redirect(`/products?page=${1}`);
+            }
+                
+                getAllUsers ? res.status(200).json( { status: 'success', payload: getAllUsers })
+                : res.status(404).json( { status: 'error', message: 'something went wrong', payload: getAllUsers});
+
+        }catch(e){
+            req.logger.error("something went wrong")
+            res.status(500).json({message: `Error: ${e.message}`});
+        }
+     }
+
+     getAllUsersPaginateView = async (req, res) => {
+        try{
+            const limit = parseInt(req.query.limit) || 8;
+            let page = parseInt(req.query.page) || 1;
+            const sort = req.query.sort || {};
+            const role = req.query.role || {};
+
+            const getAllUsers = await this.userService.getUsers(limit, page, role, sort);
+
+            if (page > getAllUsers.totalPages) {
+                return res.redirect(`/products?page=${getAllUsers.totalPages}`);         
+            }
+            else if (isNaN(page) || page < 1) {
+                return res.redirect(`/products?page=${1}`);
+            }
+                
+            const docs = getAllUsers.docs.map(product => Object.assign({}, product));
+            
+            res.render('usersPanel', { paginatedDocs: docs, paginatedInfo: getAllUsers});
+
+        }catch(e){
+            req.logger.error("something went wrong")
+            res.status(500).json({message: `Error: ${e.message}`});
+        }
+     }
+
      registerUser = async (req, res) => {
         try {
             const userDto = new UserDto(req.body);
@@ -130,7 +181,7 @@ class UserController {
         res.cookie(jwtCookieToken, access_token, {
             maxAge: 30 * 60 * 1000,
             httpOnly: true
-        }).status(200).redirect('/api/products');
+        }).status(200).redirect('/products');
     };
 
 
@@ -159,7 +210,6 @@ class UserController {
             this.secret = jwtKey + this.user.password;
             const access_token = passwordUpdateToken(this.user, this.secret);
             const url = `http://localhost:${port}/change/password/${this.user._id}/${access_token}`;
-            req.logger.debug(this.user);
             const sendMail = sendRecoveryPassword(email, url);
             if(!access_token) return res.redirect('/login');
             res.status(201).send({status: "success", message: `${this.user.userName}, your password reset link was sent to your email address`});
@@ -224,7 +274,38 @@ class UserController {
         }
      };
 
-     deleteUser = async (req, res) => {
+     adminChangeRole = async (req, res) => {
+        const { uid } = req.params;
+        const validateUser = { _id: uid };
+        try{
+            this.user = await this.userService.fieldValidator(validateUser);
+            if(this.user?.role === 'user' && this.user?.documentsStatus !== 'complete'){
+                return res.status(409).json({status: "conflict", message: "Usuario necesita completar la documentacion para cambiar a premium"});
+            }
+            const changeRole = await this.userService.switchUserRole(this.user._id, this.user.role);
+            if(!changeRole) return res.status(400).send({status: "error", message: "There was an error. Try again!"});
+            
+        res.status(200).send({ status: "success", message: `User role was successfully updated, user role is ${changeRole._doc.role} now` });
+            return changeRole;
+        }catch(e){
+            res.status(400).send( { status: "error", message: e.message } );
+        }
+     };
+
+     deleteUserById = async (req, res) => {
+        const { uid } = req.params;
+        try{
+            const deleteUser = await this.userService.deleteUser("_id", uid);
+            res.status(200).send( { status: "success", payload: deleteUser });
+            return deleteUser;
+        }catch(e){
+            req.logger.error(e.message);
+            res.status(400).send( { status: "error", message: e.message } );
+            throw (e);
+        }
+     };
+
+     deleteUserByEmail = async (req, res) => {
         const { uid } = req.params;
         try{
             const deleteUser = await this.userService.deleteUser("email", uid);

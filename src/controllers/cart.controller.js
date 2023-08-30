@@ -56,7 +56,7 @@ class CartController {
                 let total = 0;
                 if (getCartPopulate) {
                     total = getCartPopulate.products.reduce((total, quantity ) => total + quantity.quantity, 0) || 0
-                    let user = structuredClone(req.user);
+                    let user = JSON.parse(JSON.stringify(req.user));
                     return res.render('home', { getDbCart: getCartPopulate, userSession: user, total: total }); /*res.status(200).send({status: 'success', payload: getCartPopulate});*/
                 } else {
 

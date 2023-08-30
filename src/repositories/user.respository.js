@@ -5,9 +5,27 @@ class UserRepository {
         this.cartDao = cartDao;
     }
 
-        getUser = async (email) => {
+        getUser = async (attr, value) => {
             try {
-                const user = await this.userDao.getUser(email);
+                const user = await this.userDao.getUser(attr, value);
+                return user;
+            } catch(e) {
+                console.error(e.message);
+            }
+        };
+
+        getUsersPagination = async (limit, page, role, sort) => {
+            try{
+                const getUsers = await this.userDao.getAllUsersPagination(limit, page, role, sort);
+                return getUsers;
+            }catch(e){
+                console.error(e.message);
+            }
+        }
+
+        getUserById = async (id) => {
+            try {
+                const user = await this.userDao.getUserById(id);
                 return user;
             } catch(e) {
                 console.error(e.message);
@@ -43,10 +61,10 @@ class UserRepository {
             }
         };
 
-        deleteUser = async (attr, email) => {
+        deleteUser = async (attr, value) => {
             try{
-                const findUser = await this.userDao.getUser(email);
-                const deleteUser = await this.userDao.deleteUser(attr, email);
+                const findUser = await this.userDao.getUser(attr, value);
+                const deleteUser = await this.userDao.deleteUser(attr, value);
                 if(deleteUser.deletedCount === 1 && findUser?.cartId) {
                     await this.cartDao.deleteCart(findUser.cartId);
                 }

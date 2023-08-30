@@ -16,7 +16,7 @@ const cartsSchema = new mongoose.Schema({
         }}
     ],
     createdAt: {
-        inmutable: true,
+        immutable: true,
         type: Date,
         default: () => Date.now()
     }  

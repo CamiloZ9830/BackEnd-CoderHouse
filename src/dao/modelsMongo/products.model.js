@@ -40,7 +40,7 @@ const productsSchema = new mongoose.Schema({
       default: 'admin'
      },
      createdAt: {
-        inmutable: true,
+      immutable: true,
         type: Date,
         default: () => Date.now()
      },

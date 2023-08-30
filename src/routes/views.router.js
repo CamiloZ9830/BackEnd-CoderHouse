@@ -1,16 +1,14 @@
 const { Router } = require('express');
-//const ProductManager = require('../dao/fsDao/ProductManager');
 const router = Router();
 const ProductsController = require('../controllers/products.controller');
 const CartController = require('../controllers/cart.controller');
 const { passportCall, handlePermissions } = require('../utils/authorization.utils');
-const handlebarsHelpers = require('../views/handlebars.helpers/helpers'); 
 const { ownerValidate, ownerDeleteProduct } = require('../middlewares/router.middlewares/router.middlewares');
+const UserController = require('../controllers/user.controller');
 
 const productsController = new ProductsController();
 const cartController = new CartController();
-//const filePath = path.resolve(__dirname, '../dao/fsDao/products-file.json');
-//const callNewProduct = new ProductManager(filePath);
+const userController = new UserController();
 
 
 
@@ -27,7 +25,7 @@ router.get('/', async (req, res) => {
 router.get('/realTimeProducts', passportCall('jwt'), handlePermissions(["ADMIN"]), async (req, res) => {
     try {
         
-        const getProducts = await callNewProduct.getProducts();
+        const getProducts = await productsController.getProducts();
      
           res.render('realTimeProducts', {getProducts});
      
@@ -53,7 +51,7 @@ router.get('/realTimeChat', passportCall('jwt'), handlePermissions(["USER", "PRE
 
 
 
-/* se usas queries como limit, page, product category (RoadBikes, ElectricBikes, accesorios etc.) y sort */
+/* se usa queries como limit, page, product category (RoadBikes, ElectricBikes, accesorios etc.) y sort */
 router.get('/products', passportCall('jwt'), productsController.getProductsRender);
 
 /*Esta ruta renderiza los productos del carrito de un suario por id de carrito */
@@ -116,14 +114,18 @@ router.get('/products/create-product', passportCall('jwt'), handlePermissions(["
     }
 });
 
-router.get('/upload/', async (req, res) => {
+router.get('/upload/', passportCall('jwt'), handlePermissions(["USER", "PREMIUM"]), async (req, res) => {
+        const { _id } = req.user;
     try{
-        res.status(200).render('uploadDocs', {});
+        res.status(200).render('uploadDocs', { _id });
     }catch(e){
         req.logger.error(e.message);
         res.status(500).json({message: `Error: ${e.message}`});
     }
-})
+});
+
+/*admin - getAllUsers */
+router.get('/admin/users', passportCall('jwt'), handlePermissions(["ADMIN"]), userController.getAllUsersPaginateView);
 
 /*ruta de handlebars para eliminar producto*/
 router.post('/api/product/:pid/', passportCall('jwt'), handlePermissions(["PREMIUM", "ADMIN"]), ownerDeleteProduct, productsController.deleteProductById);

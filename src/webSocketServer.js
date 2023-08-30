@@ -79,7 +79,6 @@ function extractTokenFromCookie(cookieHeader) {
   const tokenRegex = /jwtCookieToken=([^;]+)/;
   const match = cookieHeader.match(tokenRegex);
   if (match) {
-    console.log(match[1]);
     return match[1];
   }
   return null;

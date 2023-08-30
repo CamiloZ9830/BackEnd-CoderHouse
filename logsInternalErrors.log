@@ -1,0 +1,39 @@
+2023-07-11T06:39:21.695Z error: uncaughtException: developmentLogger is not defined
+ReferenceError: developmentLogger is not defined
+    at winstonLogger (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\src\utils\logger\logger.utils.js:71:22)
+    at Layer.handle [as handle_request] (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\middleware\init.js:40:5)
+    at Layer.handle [as handle_request] (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:286:9
+    
+2023-07-24T15:20:08.327Z error: uncaughtException: developmentLogger is not defined
+ReferenceError: developmentLogger is not defined
+    at winstonLogger (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\src\utils\logger\logger.utils.js:71:22)
+    at Layer.handle [as handle_request] (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\middleware\init.js:40:5)
+    at Layer.handle [as handle_request] (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:286:9
+    
+2023-07-24T15:20:08.535Z error: uncaughtException: developmentLogger is not defined
+ReferenceError: developmentLogger is not defined
+    at winstonLogger (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\src\utils\logger\logger.utils.js:71:22)
+    at Layer.handle [as handle_request] (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\middleware\init.js:40:5)
+    at Layer.handle [as handle_request] (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\juancamilo\Desktop\BackEnd-JavaScript-CoderHouse\Pre-EntregaPF\node_modules\express\lib\router\index.js:286:9
+    

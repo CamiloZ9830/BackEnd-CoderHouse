@@ -29,7 +29,7 @@ describe('testing de sesion', () => {
             const { statusCode, _body } = await requester.post('/user-login').send({
                                                                                     ...newUser
                                                                                     });
-            const decode = jwt.verify(_body.token, jwtKey);                        
+            const decode = jwt.verify(_body.token, jwtKey);                      
             expect(statusCode).to.be.equal(200); 
             expect(_body.status).to.be.equal('success');
             expect(_body.token).to.be.ok;
@@ -41,7 +41,7 @@ describe('testing de sesion', () => {
     describe('test elimina el usuario "newUser" recien creado', () => {
         it('El endpoint DELETE /user-delete/:uid/ elimina el usuario de la base de datos',
         async () => {
-            const { statusCode, _body } = await requester.delete(`/user-delete/${newUser.email}`);
+            const { statusCode, _body } = await requester.delete(`/api/users/delete/${newUser.email}`);
             expect(statusCode).to.be.equal(200);
             expect(_body.status).to.be.equal('success');
             expect(_body.payload.deletedCount).to.be.equal(1);

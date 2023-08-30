@@ -3,7 +3,7 @@ const { emailValidator, userNameValidator } = require('../middlewares/router.mid
 const UserController = require('../controllers/user.controller');
 const router = Router();
 const passport = require('passport');
-const { passportCall } = require('../utils/authorization.utils');
+const { passportCall, handlePermissions } = require('../utils/authorization.utils');
 const uploads = require('../utils/multer.utils');
 
 
@@ -32,14 +32,23 @@ router.get('/logout', passportCall('jwt'), userController.userLogout);
 router.get('/email/password-reset', userController.sendPasswordRecovery);
 router.post('/restore/password/:userId/:token', userController.passwordReset);
 
+/*obtener todos los usuarios admin role*/
+router.get('/api/admin/users', /*passportCall('jwt'), handlePermissions(["ADMIN"]),*/ userController.getAllUsers);
+
 /*subir documentacion*/
 router.post('/api/users/:uid/documents', passportCall('jwt'), uploads, userController.uploadUserDocuments);
 
 /*cambiar rol*/
 router.post('/api/users/premium/:uid/', passportCall('jwt'), userController.changeRole);
 
+/*admin modifica el rol de un usuario*/
+router.post('/api/admin/cambiar-rol-usuario/:uid', passportCall('jwt'), handlePermissions(["ADMIN"]), userController.adminChangeRole);
+
 /*elimina el usuario*/
-router.delete('/user-delete/:uid', userController.deleteUser);
+router.delete('/api/users/delete/:uid', userController.deleteUserByEmail);
+
+/*elimina usuario panel admin*/
+router.post('/api/users/admin-delete/:uid', passportCall('jwt'), handlePermissions(["ADMIN"]), userController.deleteUserById);
 
 /*github login*/
 router.get('/api/session/github', passport.authenticate('github', {scope:['user:email']}), async (req, res) => {});

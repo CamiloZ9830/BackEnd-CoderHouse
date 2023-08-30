@@ -1,44 +1,37 @@
 const { Router } = require('express');
 const router = Router();
-const path = require('path');
 const ProductsController = require('../controllers/products.controller');
 const { objectValidation, objectValidationUpdate, ownerDeleteProduct } = require('../middlewares/router.middlewares/router.middlewares');
 const { handlePermissions, passportCall } = require('../utils/authorization.utils');
 
 const productsController = new ProductsController();
-  /*const filePath = path.resolve(__dirname, '../dao/fsDao/products-file.json');
-  const callNewProduct = new ProductManager(filePath);*/
-  
   
   const returnRouter = function(io) {
 
-  router.get('/api/products/',productsController.getProducts, async (req, res) => {
-     /*getDbProducts ? res.status(200).send({status: 'success', payload: getDbProducts})
-     : res.status(400).send({status: 'error', payload: getDbProducts});*/
-  });
+  router.get('/api/products/',productsController.getProducts);
 
   /*ruta de mocking products*/
   router.get('/mockingproducts', productsController.mockingProducts);
   
-  
+  /*encuentra un producto por id*/
   router.get('/api/products/:pid', productsController.findProductById);
   
-  
-   router.post('/api/products/', productsController.createProduct, 
-                  async (req, res) => {
-            //io.sockets.emit('newProduct', [prod2, allProducts]);         
-      });
+  /*crea un producto*/
+   router.post('/api/products/', passportCall('jwt'), productsController.createProduct);
       
      
+  /*actualiza producto*/
+   router.put('/api/products/:pid/',passportCall('jwt'), handlePermissions(["ADMIN"]), 
+               objectValidationUpdate, productsController.updateProductById);
   
-   router.put('/api/products/:pid/',passportCall('jwt'), handlePermissions(["ADMIN"]), objectValidationUpdate, productsController.updateProductById, async (req, res) => {   
-   });
-  
-  
+  /*elimina un producto */
    router.delete('/api/products/:pid/', productsController.deleteProductById, async (req, res) => { 
-      console.log("success");  
-             //io.sockets.emit('newProduct', {status: "success", massage: `product with pid ${pid} deleted`, payload: allProducts});     
+      console.log("success");      
    });
+
+   /*test y docs routes*/
+   router.post('/api/products-test/', productsController.swaggerCreateProduct);
+   router.delete('/api/products-test/:pid/', productsController.testDeleteProductById);
      return router
 
   }

@@ -18,6 +18,26 @@ class MongoUsersDao {
           }  
      };
 
+     //pendiente borrar
+     getUserById = async (id) => {
+        try{
+            const getUser = await this.model.findById(id);
+            return getUser;
+       }
+         catch (e) {
+           console.error(e.message);
+         }  
+    };
+
+     getAllUsersPagination = async (limit, page, role, sort) => {
+        try{
+            const getAllUsers = await this.model.paginate( role, { limit: limit, sort: sort, page: page } );
+            return getAllUsers;
+        }catch(e){
+            console.error(e.message);
+        }
+     };
+
      updateUserAttribute = async (userId, attr, newAttrValue) => {
             try {
                 const update = await this.model.updateOne(
@@ -51,9 +71,9 @@ class MongoUsersDao {
         }
      };
 
-     getUser = async (email) => {
+     getUser = async (attr, value) => {
            try{
-            const getUser = await this.model.findOne({"email" : email});          
+            const getUser = await this.model.findOne({[attr] : value});          
             return getUser;
            }
            catch(e) {
@@ -73,10 +93,10 @@ class MongoUsersDao {
         }
      };
 
-     deleteUser = async (attr, email) => {
+     deleteUser = async (attr, value) => {
         try{
             const deleteUser = await this.model.deleteOne(
-                {[attr]: email},         
+                {[attr]: value},         
             )
             return deleteUser;
         }catch(e){
@@ -124,8 +144,6 @@ class MongoUsersDao {
                     }
                 );
             }
-
-            console.log("from dao document length", updatedUser.documents.length);
                       
             return updatedUser;
               

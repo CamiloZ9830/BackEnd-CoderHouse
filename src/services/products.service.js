@@ -1,4 +1,5 @@
 const MongoProductDao = require('../dao/mongoDao/mongoProductDao');
+const MongoUsersDao = require('../dao/mongoDao/mongoUsersDao');
 const ProductsRepository = require('../repositories/products.repository');
 const { faker } = require('@faker-js/faker');
 const { randomUUID } = require('crypto');
@@ -6,7 +7,7 @@ const { randomUUID } = require('crypto');
 
 class ProductService {
     constructor() {
-        this.repository = new ProductsRepository(new MongoProductDao())
+        this.repository = new ProductsRepository(new MongoProductDao(), new MongoUsersDao())
     }
      
    async getProducts (limit, page, category, sort) {
@@ -69,6 +70,15 @@ class ProductService {
           console.error(e.message);
          }
     };
+
+    async findOwner (attr, value) {
+      try {
+         const findProductOwner = await this.repository.findOwner(attr, value);
+         return findProductOwner;
+      } catch (e) {
+       console.error(e.message);
+      }
+ };
 
     async substractStock (prodId, quantity) {
       try {

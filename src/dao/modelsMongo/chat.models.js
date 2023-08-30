@@ -26,7 +26,7 @@ const chatSchema = new mongoose.Schema({
         },
 
       timestamps: {
-            inmutable: true,
+            immutable: true,
             type: Date,
             default: () => Date.now()
         }

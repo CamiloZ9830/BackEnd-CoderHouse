@@ -1,0 +1,22 @@
+2023-07-11T07:02:31.687Z fatal: 
+                An unexpected error occurred during processing.
+                Request: GET in /loggerTest
+                User information not available
+                Timestamp: 2:02:31 AM
+                
+    
+2023-07-11T07:02:31.690Z error: 
+                An unexpected error occurred during processing.
+                Request: GET in /loggerTest
+                User information not available
+                Timestamp: 2:02:31 AM
+                
+    
+2023-07-21T04:17:40.054Z error: Invalid password
+    
+2023-07-21T04:18:14.041Z error: Invalid email
+    
+2023-07-21T04:22:25.060Z error: Invalid password
+    
+2023-09-04T02:26:49.347Z error: Invalid email
+    

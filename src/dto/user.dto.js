@@ -10,6 +10,9 @@ class UserDto {
             this.dateOfBirth = user.dateOfBirth;
             this.password = user.password;
             this.role = user.role;
+            this.createdAt = user.createdAt;
+            this.lastConnection = user.lastConnection;
+            this.age = user.age;
 
         }
 
@@ -51,6 +54,22 @@ class UserDto {
 
             normalizedData._id = this.id;
             normalizedData.email = this.email;
+
+            return normalizedData;
+        };
+
+        async getUserDto () {
+            const normalizedData = {};
+
+            normalizedData._id = this.id;
+            normalizedData.firstName = this.firstName;
+            normalizedData.lastName = this.lastName;
+            normalizedData.userName = this.userName;
+            normalizedData.email = this.email;
+            normalizedData.role = this.role;
+            normalizedData.age = this.age;
+            normalizedData.createdAt = this.createdAt;
+            normalizedData.lastConnection = this.lastConnection;
 
             return normalizedData;
         };

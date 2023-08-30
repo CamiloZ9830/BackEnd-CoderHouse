@@ -1,0 +1,48 @@
+ <h1>Miembros</h1>
+
+       <div class="shop">
+        {{#if paginatedDocs}}
+      {{#each paginatedDocs}}
+       <div class="item">
+                    <div class="descripcion-Item">
+                       <h3><b>Nombre: </b>{{this.firstName}} {{this.lastName}}</h3>
+                       <p><b>Username: </b>{{this.userName}}</p>
+                       <p><b>Email: </b>{{this.email}}</p>
+                       <p><b>Edad: </b>{{this.age}}</p>
+                       <p><b>Tipo de cuenta: </b>{{this.role}}</p>
+                       <p><b>Creado: </b>{{this.createdAt}}</p>
+                       <p><b>Ultima conexion: </b>{{this.lastConnection}}</p>                    
+                    </div>  
+                                                 
+                      <form action="/api/admin/cambiar-rol-usuario/{{this._id}}" method="POST">
+  <input type="hidden" name="userid" value="{{this._id}}">
+  <button class="button-33" type="submit">Cambiar el Rol del usuario</button>
+</form>
+
+<form action="/api/users/admin-delete/{{this._id}}" method="POST">
+  <input type="hidden" name="userid" value="{{this._id}}">
+  <button class="button-delete" type="submit">Eliminar este Usuario</button>
+</form>
+ 
+</div>  
+          {{/each}}
+<a href="/products"><p>Ir a Pagina principal</p></a>         
+          <div class="pagination">
+  {{#if paginatedInfo.hasPrevPage}}
+    <a href="?page={{paginatedInfo.prevPage}}&limit={{paginatedInfo.limit}}&category={{category}}&sort={{sort}}">Prev</a>
+  {{/if}}
+
+  {{#each paginatedInfo.pages}}
+    {{#if this.isCurrent}}
+      <span class="current">{{this.page}}</span>
+    {{else}}
+      <a href="?page={{this.page}}&limit={{paginatedInfo.limit}}&category={{category}}&sort={{sort}}">{{this.page}}</a>
+    {{/if}}
+  {{/each}}
+
+  {{#if paginatedInfo.hasNextPage}}
+    <a href="?page={{paginatedInfo.nextPage}}&limit={{paginatedInfo.limit}}&category={{category}}&sort={{sort}}">Next</a>
+  {{/if}}
+</div>
+      {{/if}}
+     </div>
